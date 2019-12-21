@@ -16,10 +16,51 @@
 ### 面试
 
 * [面试-并发编程](note/面试-并发编程.md)
+* [面试-反射](note/反射.md)
+* [面试-JVM](note/深入理解java虚拟机.md)
+* [面试-Kafka](note/Kafka.md)
+* [面试-NIO](note/NIO的理解.md)
 
 ### Docker
 
 * [Docker搭建私有云](note/Docker搭建私有云.md)
+
+### Mysql
+
+* [Mysql索引](note/mysql索引.md)
+* [Mysql事务](note/mysql事务.md)
+
+### Redis
+
+* [Redis-数据类型](note/Redis-数据类型.md)
+* [Redis-高可用](note/Redis高可用.md)
+
+### 设计模式
+
+* [单例模式](note/设计模式-单例.md)
+* [工厂模式](note/工厂模式.md)
+* [动态代理](note/动态代理.md)
+* [Builder模式](note/Builder.md)
+
+### 数据结构与算法
+
+* [二分法](note/二分法.md)
+* [二叉树算法](note/二叉树算法.md)
+* [冒泡排序](note/冒泡排序.md)
+* [插入排序](note/插入排序.md)
+* [选择排序](note/选择排序.md)
+* [快速排序](note/快速排序.md)
+* [归并排序](note/归并排序.md)
+* [位图法](note/位图法.md)
+
+### 源码
+
+* [IOC源码解析](note/IOC源码解析.md)
+* [Mybatis源码解析](note/Mybatis源码解析.md)
+
+
+
+
 
 
 
