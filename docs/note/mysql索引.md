@@ -384,6 +384,30 @@ mysql> show profile for query 24;
 +----------------------+----------+
 ```
 
+
+
+### 回表
+
+> 下边解释下回表查询
+
+普通索引因为无法直接定位行记录，其查询过程在通常情况下是需要扫描两遍索引树的。
+
+```mysql
+select * from t where name = 'lisi';
+```
+
+粉红色的路径需要扫描两遍索引树，
+
+第一遍先通过普通索引定位到主键值id=5，
+
+第二遍再通过聚集索引定位到具体行记录。
+
+这就是所谓的回表查询，即先定位主键值，再根据主键值定位行记录，性能相对于只扫描一遍聚集索引树的性能要低一些。
+
+![mysql回表](../assets/mysql回表.png)
+
+
+
 # 参考
 
 - http://blog.codinglabs.org/articles/theory-of-mysql-index.html
