@@ -107,6 +107,9 @@ kafka-console-consumer --bootstrap-server localhost:9092 --topic hello --from-be
 # 查看消费组
 kafka-consumer-groups --bootstrap-server localhost:9092 --list
 
+# 显示某个消费组的消费详情（0.10.1.0版本+）
+kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group my-group
+
 # 查看kafka索引文件
 kafka-run-class kafka.tools.DumpLogSegments --files /usr/local/var/lib/kafka-logs/test-0/00000000000000000000.log  --print-data-log
 
