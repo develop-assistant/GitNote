@@ -1,115 +1,105 @@
 # Docker搭建kafka集群
 
 ```yml
-version: '3'
+version: '2.1'
+
 services:
-  zk1:
-    image: confluentinc/cp-zookeeper:latest
-    hostname: zk1
-    container_name: zk1
-    restart: always
+  zoo1:
+    image: zookeeper:3.4.9
+    hostname: zoo1
     ports:
       - "12181:2181"
-    volumes:
-      - "./zkcluster/zk1/data:/data"
-      - "./zkcluster/zk1/datalog:/datalog"
     environment:
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zk1:12888:13888;zk2:22888:23888;zk3:32888:33888
+        ZOO_MY_ID: 1
+        ZOO_PORT: 2181
+        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - ./zk-multiple-kafka-multiple/zoo1/data:/data
+      - ./zk-multiple-kafka-multiple/zoo1/datalog:/datalog
 
-  zk2:
-    image: confluentinc/cp-zookeeper:latest
-    hostname: zk2
-    container_name: zk2
-    restart: always
+  zoo2:
+    image: zookeeper:3.4.9
+    hostname: zoo2
     ports:
       - "22181:2181"
-    volumes:
-      - "./zkcluster/zk2/data:/data"
-      - "./zkcluster/zk2/datalog:/datalog"
     environment:
-      ZOOKEEPER_SERVER_ID: 2
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zk1:12888:13888;zk2:22888:23888;zk3:32888:33888
+        ZOO_MY_ID: 2
+        ZOO_PORT: 2181
+        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - ./zk-multiple-kafka-multiple/zoo2/data:/data
+      - ./zk-multiple-kafka-multiple/zoo2/datalog:/datalog
 
-  zk3:
-    image: confluentinc/cp-zookeeper:latest
-    hostname: zk3
-    container_name: zk3
-    restart: always
+  zoo3:
+    image: zookeeper:3.4.9
+    hostname: zoo3
     ports:
       - "32181:2181"
-    volumes:
-      - "./zkcluster/zk3/data:/data"
-      - "./zkcluster/zk3/datalog:/datalog"
     environment:
-      ZOOKEEPER_SERVER_ID: 3
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zk1:12888:13888;zk2:22888:23888;zk3:32888:33888
+        ZOO_MY_ID: 3
+        ZOO_PORT: 2181
+        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+      - ./zk-multiple-kafka-multiple/zoo3/data:/data
+      - ./zk-multiple-kafka-multiple/zoo3/datalog:/datalog
+
 
   kafka1:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:5.3.1
     hostname: kafka1
-    container_name: kafka1
-    restart: always
-    depends_on:
-      - zk1
-      - zk2
-      - zk3
+    ports:
+      - "9092:9092"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka1
-      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2181,zk3:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
     volumes:
-      - ./kfkluster/kafka1/logs:/kafka
+      - ./zk-multiple-kafka-multiple/kafka1/data:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
 
   kafka2:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:5.3.1
     hostname: kafka2
-    container_name: kafka2
-    restart: always
-    depends_on:
-      - zk1
-      - zk2
-      - zk3
+    ports:
+      - "9093:9092"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka2
-      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka2:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
       KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2181,zk3:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
     volumes:
-      - ./kfkluster/kafka2/logs:/kafka
+      - ./zk-multiple-kafka-multiple/kafka2/data:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
 
   kafka3:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:5.3.1
     hostname: kafka3
-    container_name: kafka3
-    restart: always
-    depends_on:
-      - zk1
-      - zk2
-      - zk3
+    ports:
+      - "9094:9092"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka3
-      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka3:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
       KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2181,zk3:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
     volumes:
-      - ./kfkluster/kafka3/logs:/kafka
+      - ./zk-multiple-kafka-multiple/kafka3/data:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
 
   kafka_manager:
     image: hlebalbau/kafka-manager:latest
@@ -119,7 +109,7 @@ services:
     ports:
       - "9000:9000"
     environment:
-      ZK_HOSTS: "zk1:2181,zk2:2181,zk3:2181"
+      ZK_HOSTS: "zoo1:2181,zoo2:2181,zoo3:2181"
       APPLICATION_SECRET: "random-secret"
       KAFKA_MANAGER_AUTH_ENABLED: "true"
       KAFKA_MANAGER_USERNAME: admin
