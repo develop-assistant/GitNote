@@ -153,7 +153,7 @@ get /
 下边是查看kafka数据的存储。在/usr/local/var/lib/kafka-logs目录下。可以看到hello中的3个partition文件夹。
 
 ```shell
-# 目录结构，其中 __consumer_offsets中存储consumer的消费offset，hello-存储消息，消息在3个partition均匀分步
+# 目录结构，其中 __consumer_offsets中存储consumer的消费offset，hello-存储消息，消息在3个partition均匀分步。每个partition一个文件夹，每个文件夹下多个segment，每个segment为一个文件
 
 drwxr-xr-x  6 cuishiying  admin   192B 12 31 13:45 __consumer_offsets-0
 drwxr-xr-x  6 cuishiying  admin   192B 12 31 13:45 __consumer_offsets-1
