@@ -12,19 +12,23 @@ services:
     image: zookeeper
     restart: always
     hostname: zoo1
+    container_name: zoo1
     ports:
-      - 2181:2181
+      - 2184:2181
     environment:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
     volumes:
       - ./zookeeper/zoo1/data:/data
       - ./zookeeper/zoo1/datalog:/datalog
+    networks:
+      - zk-net
 
   zoo2:
     image: zookeeper
     restart: always
     hostname: zoo2
+    container_name: zoo2
     ports:
       - 2182:2181
     environment:
@@ -33,11 +37,14 @@ services:
     volumes:
       - ./zookeeper/zoo2/data:/data
       - ./zookeeper/zoo2/datalog:/datalog
+    networks:
+      - zk-net
 
   zoo3:
     image: zookeeper
     restart: always
     hostname: zoo3
+    container_name: zoo3
     ports:
       - 2183:2181
     environment:
@@ -46,6 +53,12 @@ services:
     volumes:
       - ./zookeeper/zoo3/data:/data
       - ./zookeeper/zoo3/datalog:/datalog
+    networks:
+      - zk-net
+
+networks:
+  zk-net:
+    driver: bridge
 ```
 
 **校验配置**
