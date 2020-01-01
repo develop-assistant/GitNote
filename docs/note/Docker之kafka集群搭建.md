@@ -321,5 +321,5 @@ kafka-run-class kafka.tools.DumpLogSegments --files /kafka/kafka-logs-7253a8da1f
 kafka-run-class kafka.tools.DumpLogSegments --files /kafka/kafka-logs-7253a8da1fa3/test-0/00000000000000000000.timeindex  --verify-index-only
 ```
 
-
+上述结果也可以在kafaka-manage中观察到。同时，kafka节点上下线的rebalance等都可以在kafka-mange中进行配置。
 
