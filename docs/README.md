@@ -24,6 +24,7 @@
 ### Docker
 
 * [Docker搭建私有云](note/Docker搭建私有云.md)
+* [Docker之Zookeeper集群搭建](note/Docker之Zookeeper集群搭建.md)
 
 ### Mysql
 
