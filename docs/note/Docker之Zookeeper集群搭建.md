@@ -98,3 +98,58 @@ Mode: leader
 # exit
 ```
 
+从上边的结果观察得知: zoo3目前位leader。
+
+
+
+## 2. 测试集群
+
+**关闭leader**
+
+```shell
+➜  docker docker stop zoo3
+zoo3
+```
+
+**查看选举结果**
+
+```shell
+➜  docker docker exec -it zoo1 /bin/sh
+# zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /conf/zoo.cfg
+Client port found: 2181. Client address: localhost.
+Mode: follower
+# exit
+
+➜  docker docker exec -it zoo2 /bin/sh
+# zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /conf/zoo.cfg
+Client port found: 2181. Client address: localhost.
+Mode: leader
+# exit
+```
+
+zookeeper集群重新选举结果: zoo2被选为leader
+
+**再次启动zoo3**
+
+```shell
+➜  docker docker start zoo3
+zoo3
+```
+
+**查看选举情况**
+
+这里我们主要观察zoo3重新启动后是否会成为follower
+
+```shell
+➜  docker docker exec -it zoo3 /bin/sh
+# zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /conf/zoo.cfg
+Client port found: 2181. Client address: localhost.
+Mode: follower
+```
+
