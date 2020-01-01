@@ -1,0 +1,255 @@
+# Docker之Kafka集群搭建
+
+## 1. 集群搭建
+
+Docker-compose-kafka.yml
+
+```yml
+version: '3.1'
+
+services:
+
+  kafka1:
+    image: wurstmeister/kafka
+    restart: always
+    container_name: kafka1
+    ports:
+      - "9093:9092"
+    external_links:
+      - zoo1
+      - zoo2
+      - zoo3
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_HOST_NAME: kafka1
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_HOST_NAME: kafka1
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_LISTENERS: PLAINTEXT://kafka1:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
+    volumes:
+      - "./kafka/kafka1/docker.sock:/var/run/docker.sock"
+      - "./kafka/kafka1/data/:/kafka"
+    networks:
+      - zk-net
+
+
+  kafka2:
+    image: wurstmeister/kafka
+    restart: always
+    container_name: kafka2
+    ports:
+      - "9094:9092"
+    external_links:
+      - zoo1
+      - zoo2
+      - zoo3
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ADVERTISED_HOST_NAME: kafka2
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_HOST_NAME: kafka2
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_LISTENERS: PLAINTEXT://kafka2:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092
+    volumes:
+      - "./kafka/kafka2/docker.sock:/var/run/docker.sock"
+      - "./kafka/kafka2/data/:/kafka"
+    networks:
+      - zk-net
+
+  kafka3:
+    image: wurstmeister/kafka
+    restart: always
+    container_name: kafka3
+    ports:
+      - "9095:9092"
+    external_links:
+      - zoo1
+      - zoo2
+      - zoo3
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ADVERTISED_HOST_NAME: kafka3
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_HOST_NAME: kafka3
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_LISTENERS: PLAINTEXT://kafka3:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092
+    volumes:
+      - "./kafka/kafka3/docker.sock:/var/run/docker.sock"
+      - "./kafka/kafka3/data/:/kafka"
+    networks:
+      - zk-net
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager:latest
+    restart: always
+    container_name: kafka-manager
+    hostname: kafka-manager
+    ports:
+      - "9000:9000"
+    links:            # 连接本compose文件创建的container
+      - kafka1
+      - kafka2
+      - kafka3
+    external_links:   # 连接本compose文件以外的container
+      - zoo1
+      - zoo2
+      - zoo3
+    environment:
+      ZK_HOSTS: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_BROKERS: kafka1:9092,kafka2:9092,kafka3:9092
+    networks:
+      - zk-net
+
+networks:
+  zk-net:
+    driver: bridge
+```
+
+**启动集群**
+
+```
+docker-compose -f docker-compose-kafka.yml up -d
+```
+
+**kafka-manager管理**
+
+配置如下图
+
+![kafka-manage](../assets/kafka-manage.png)
+
+
+
+访问 http://localhost:9000/clusters/kafka 即可看到集群状态
+
+![kafka-manage-status](../assets/kafka-manage-status.png)
+
+## 2. 分析原理
+
+**Zookeeper状态**
+
+kafka基于zookeeper，kafka启动会将元数据保存在zookeeper中。查看zookeeper节点目录，会发现多了很多和kafka相关的目录。结果如下:
+
+```
+➜  docker zkCli -server 127.0.0.1:2183
+Connecting to 127.0.0.1:2183
+Welcome to ZooKeeper!
+JLine support is enabled
+
+WATCHER::
+
+WatchedEvent state:SyncConnected type:None path:null
+[zk: 127.0.0.1:2183(CONNECTED) 0] ls /
+[cluster, controller, brokers, zookeeper, admin, isr_change_notification, log_dir_event_notification, controller_epoch, zk-test0000000000, kafka-manager, consumers, latest_producer_id_block, config]
+```
+
+
+
+**kafka日志**
+
+kafka中的数据会持久化到磁盘日志文件，因为前边配置了docker映射，所以我们现在查看下相关目录
+
+```
+➜  data pwd
+/Users/cuishiying/Desktop/docker/kafka/kafka1/data
+➜  data tree
+.
+└── kafka-logs-7253a8da1fa3
+    ├── __consumer_offsets-1
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-10
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-13
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-16
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-19
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-22
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-25
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-28
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-31
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-34
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-37
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-4
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-40
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-43
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-46
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-49
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── __consumer_offsets-7
+    │   ├── 00000000000000000000.index
+    │   ├── 00000000000000000000.log
+    │   ├── 00000000000000000000.timeindex
+    │   └── leader-epoch-checkpoint
+    ├── cleaner-offset-checkpoint
+    ├── log-start-offset-checkpoint
+    ├── meta.properties
+    ├── recovery-point-offset-checkpoint
+    └── replication-offset-checkpoint
+
+18 directories, 73 files
+```
+
+由结果可知，kafka集群默认会将消费offset分别记录在50个topic中。由于我们测试节点3个broke，所以__consumer_offsets会均匀的分布在3个节点下。
+
