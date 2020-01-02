@@ -415,3 +415,42 @@ OK
 127.0.0.1:6379>
 ```
 
+**redis-master重新上线**
+
+该节点作为slave节点加入集群
+
+```
+➜  docker docker exec -it redis-master bash
+root@90a4a5ca9273:/data# redis-cli
+127.0.0.1:6379> auth 123456
+OK
+127.0.0.1:6379> info replication
+# Replication
+role:slave
+master_host:172.21.0.2
+master_port:6379
+master_link_status:down
+master_last_io_seconds_ago:-1
+master_sync_in_progress:0
+slave_repl_offset:1
+master_link_down_since_seconds:1577994813
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:6f1728a305b8a0bd2340740696c56ebd5717820a
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:0
+second_repl_offset:-1
+repl_backlog_active:0
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:0
+repl_backlog_histlen:0
+127.0.0.1:6379>
+```
+
+此外，由于哨兵不支持平滑的扩容，增加节点，那么自己要手动迁移数据。这里存在几个问题:
+
+1. master下线后有新写入的数据;
+2. master数据未完全同步到slave下线，造成数据丢失
+3. 脑裂，也就是说，某个master所在机器突然脱离了正常的网络，跟其他slave机器不能连接，但是实际上master还运行着。
+
