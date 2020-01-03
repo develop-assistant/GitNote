@@ -194,18 +194,18 @@ Master[2] -> Slots 10923 - 16383
 Adding replica 10.0.0.6:6379 to 10.0.0.2:6379
 Adding replica 10.0.0.7:6379 to 10.0.0.3:6379
 Adding replica 10.0.0.5:6379 to 10.0.0.4:6379
-M: 4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697 10.0.0.2:6379
+M: 5a939e259552951e393101ae1bc9072e4bbeb84f 10.0.0.2:6379
    slots:[0-5460] (5461 slots) master
-M: 39d27f77e0e8102ab4d9d46cc9b26ba0d881247d 10.0.0.3:6379
+M: afb9cd705091e1bcf644f4e628a0a7451d7ffdf4 10.0.0.3:6379
    slots:[5461-10922] (5462 slots) master
-M: 659b10c76b723da9caa33b51ad2f087739d481d5 10.0.0.4:6379
+M: f26bcb396a8181f5ca360fd0904c0282f15a221d 10.0.0.4:6379
    slots:[10923-16383] (5461 slots) master
-S: 08d29202d75af825ebda488f254a29e2b51f8699 10.0.0.5:6379
-   replicates 659b10c76b723da9caa33b51ad2f087739d481d5
-S: 0a46bc61364ac7c7a1e42d907b79dfdb72b71bd7 10.0.0.6:6379
-   replicates 4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697
-S: 8e6b886399e51e6ca8b096ac63130642e56900a6 10.0.0.7:6379
-   replicates 39d27f77e0e8102ab4d9d46cc9b26ba0d881247d
+S: 6dc5fc0c09c62d8c8d32c9f9b1e232acc224f00c 10.0.0.5:6379
+   replicates f26bcb396a8181f5ca360fd0904c0282f15a221d
+S: 8e48a3ebd3082362642d81bd2c52c769e24eec36 10.0.0.6:6379
+   replicates 5a939e259552951e393101ae1bc9072e4bbeb84f
+S: d7f6f7ae1ad5577856660d35b5aff6c9ae6f0424 10.0.0.7:6379
+   replicates afb9cd705091e1bcf644f4e628a0a7451d7ffdf4
 Can I set the above configuration? (type 'yes' to accept): yes
 >>> Nodes configuration updated
 >>> Assign a different config epoch to each node
@@ -213,24 +213,24 @@ Can I set the above configuration? (type 'yes' to accept): yes
 Waiting for the cluster to join
 ...
 >>> Performing Cluster Check (using node 10.0.0.2:6379)
-M: 4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697 10.0.0.2:6379
+M: 5a939e259552951e393101ae1bc9072e4bbeb84f 10.0.0.2:6379
    slots:[0-5460] (5461 slots) master
    1 additional replica(s)
-S: 0a46bc61364ac7c7a1e42d907b79dfdb72b71bd7 10.0.0.6:6379
-   slots: (0 slots) slave
-   replicates 4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697
-S: 08d29202d75af825ebda488f254a29e2b51f8699 10.0.0.5:6379
-   slots: (0 slots) slave
-   replicates 659b10c76b723da9caa33b51ad2f087739d481d5
-M: 659b10c76b723da9caa33b51ad2f087739d481d5 10.0.0.4:6379
-   slots:[10923-16383] (5461 slots) master
-   1 additional replica(s)
-S: 8e6b886399e51e6ca8b096ac63130642e56900a6 10.0.0.7:6379
-   slots: (0 slots) slave
-   replicates 39d27f77e0e8102ab4d9d46cc9b26ba0d881247d
-M: 39d27f77e0e8102ab4d9d46cc9b26ba0d881247d 10.0.0.3:6379
+M: afb9cd705091e1bcf644f4e628a0a7451d7ffdf4 10.0.0.3:6379
    slots:[5461-10922] (5462 slots) master
    1 additional replica(s)
+S: 6dc5fc0c09c62d8c8d32c9f9b1e232acc224f00c 10.0.0.5:6379
+   slots: (0 slots) slave
+   replicates f26bcb396a8181f5ca360fd0904c0282f15a221d
+M: f26bcb396a8181f5ca360fd0904c0282f15a221d 10.0.0.4:6379
+   slots:[10923-16383] (5461 slots) master
+   1 additional replica(s)
+S: 8e48a3ebd3082362642d81bd2c52c769e24eec36 10.0.0.6:6379
+   slots: (0 slots) slave
+   replicates 5a939e259552951e393101ae1bc9072e4bbeb84f
+S: d7f6f7ae1ad5577856660d35b5aff6c9ae6f0424 10.0.0.7:6379
+   slots: (0 slots) slave
+   replicates afb9cd705091e1bcf644f4e628a0a7451d7ffdf4
 [OK] All nodes agree about slots configuration.
 >>> Check for open slots...
 >>> Check slots coverage...
@@ -338,8 +338,12 @@ docker exec -it redis7001 redis-cli -h 10.0.0.7 -p 6379 -a 123456 ping
 **redis测试**
 
 ```
-➜  docker docker exec -it redis7001 redis-cli -h 10.0.0.4 -c -p 6379 -a 123456
-Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+docker exec -it redis7001 redis-cli -h 10.0.0.4 -c -p 6379 -a 123456
+```
+
+设置key-value结果
+
+```
 10.0.0.4:6379> set key1 1
 -> Redirected to slot [9189] located at 10.0.0.3:6379
 OK
@@ -357,13 +361,13 @@ OK
 **查看集群状态**
 
 ```
-10.0.0.3:6379> cluster nodes
-4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697 10.0.0.2:6379@16379 master - 0 1578040333000 1 connected 0-5460
-0a46bc61364ac7c7a1e42d907b79dfdb72b71bd7 10.0.0.6:6379@16379 slave 4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697 0 1578040331085 5 connected
-659b10c76b723da9caa33b51ad2f087739d481d5 10.0.0.4:6379@16379 master - 0 1578040332102 3 connected 10923-16383
-08d29202d75af825ebda488f254a29e2b51f8699 10.0.0.5:6379@16379 slave 659b10c76b723da9caa33b51ad2f087739d481d5 0 1578040331000 4 connected
-39d27f77e0e8102ab4d9d46cc9b26ba0d881247d 10.0.0.3:6379@16379 myself,master - 0 1578040332000 2 connected 5461-10922
-8e6b886399e51e6ca8b096ac63130642e56900a6 10.0.0.7:6379@16379 slave 39d27f77e0e8102ab4d9d46cc9b26ba0d881247d 0 1578040333120 6 connected
+10.0.0.7:6379> cluster nodes
+f26bcb396a8181f5ca360fd0904c0282f15a221d 10.0.0.4:6379@16379 master - 0 1578041565000 3 connected 10923-16383
+8e48a3ebd3082362642d81bd2c52c769e24eec36 10.0.0.6:6379@16379 slave 5a939e259552951e393101ae1bc9072e4bbeb84f 0 1578041564082 5 connected
+5a939e259552951e393101ae1bc9072e4bbeb84f 10.0.0.2:6379@16379 master - 0 1578041565000 1 connected 0-5460
+afb9cd705091e1bcf644f4e628a0a7451d7ffdf4 10.0.0.3:6379@16379 master - 0 1578041565104 2 connected 5461-10922
+d7f6f7ae1ad5577856660d35b5aff6c9ae6f0424 10.0.0.7:6379@16379 myself,slave afb9cd705091e1bcf644f4e628a0a7451d7ffdf4 0 1578041563000 6 connected
+6dc5fc0c09c62d8c8d32c9f9b1e232acc224f00c 10.0.0.5:6379@16379 slave f26bcb396a8181f5ca360fd0904c0282f15a221d 0 1578041565611 4 connected
 ```
 
 **查看slots**
@@ -434,4 +438,54 @@ OK
 "1"
 10.0.0.7:6379>
 ```
+
+
+
+## 3. 容灾演练
+
+现在我们杀掉7003，看7006是否会接替它的位置。
+
+```
+➜  docker docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                              NAMES
+88a5c26a606f        redis               "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:7005->6379/tcp, 0.0.0.0:17005->16379/tcp   redis7005
+2e53220c5cac        redis               "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:7001->6379/tcp, 0.0.0.0:17001->16379/tcp   redis7001
+9549a3a1cb7f        redis               "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:7006->6379/tcp, 0.0.0.0:17006->16379/tcp   redis7006
+9480d7f3a9f2        redis               "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:7002->6379/tcp, 0.0.0.0:17002->16379/tcp   redis7002
+33a3eacf8934        redis               "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:7003->6379/tcp, 0.0.0.0:17003->16379/tcp   redis7003
+b677ec9f1498        redis               "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:7004->6379/tcp, 0.0.0.0:17004->16379/tcp   redis7004
+➜  docker docker stop redis7001
+redis7001
+➜  docker docker exec -it redis7001 redis-cli -h 10.0.0.4 -c -p 6379 -a 123456
+Error response from daemon: Container 2e53220c5cacbf61b97ed15a882c6c712c49a6b87fa88b972e2ac5227d6db8c0 is not running
+➜  docker docker exec -it redis7002 redis-cli -h 10.0.0.4 -c -p 6379 -a 123456
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+10.0.0.4:6379> cluster nodes
+afb9cd705091e1bcf644f4e628a0a7451d7ffdf4 10.0.0.3:6379@16379 master - 0 1578041915000 2 connected 5461-10922
+f26bcb396a8181f5ca360fd0904c0282f15a221d 10.0.0.4:6379@16379 myself,master - 0 1578041914000 3 connected 10923-16383
+d7f6f7ae1ad5577856660d35b5aff6c9ae6f0424 10.0.0.7:6379@16379 slave afb9cd705091e1bcf644f4e628a0a7451d7ffdf4 0 1578041915549 6 connected
+8e48a3ebd3082362642d81bd2c52c769e24eec36 10.0.0.6:6379@16379 master - 0 1578041914936 7 connected 0-5460
+6dc5fc0c09c62d8c8d32c9f9b1e232acc224f00c 10.0.0.5:6379@16379 slave f26bcb396a8181f5ca360fd0904c0282f15a221d 0 1578041913511 4 connected
+5a939e259552951e393101ae1bc9072e4bbeb84f 10.0.0.2:6379@16379 master,fail - 1578041714875 1578041713349 1 connected
+```
+
+
+
+由日志可知，7005(10.0.0.6)已经变成了master。再试着启动7001，它将自动作为slave挂载到7005。如下：
+
+```
+➜  docker docker start redis7001
+redis7001
+➜  docker docker exec -it redis7002 redis-cli -h 10.0.0.4 -c -p 6379 -a 123456
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+10.0.0.4:6379> cluster nodes
+afb9cd705091e1bcf644f4e628a0a7451d7ffdf4 10.0.0.3:6379@16379 master - 0 1578042191420 2 connected 5461-10922
+f26bcb396a8181f5ca360fd0904c0282f15a221d 10.0.0.4:6379@16379 myself,master - 0 1578042192000 3 connected 10923-16383
+d7f6f7ae1ad5577856660d35b5aff6c9ae6f0424 10.0.0.7:6379@16379 slave afb9cd705091e1bcf644f4e628a0a7451d7ffdf4 0 1578042191522 6 connected
+8e48a3ebd3082362642d81bd2c52c769e24eec36 10.0.0.6:6379@16379 master - 0 1578042192436 7 connected 0-5460
+6dc5fc0c09c62d8c8d32c9f9b1e232acc224f00c 10.0.0.5:6379@16379 slave f26bcb396a8181f5ca360fd0904c0282f15a221d 0 1578042192538 4 connected
+5a939e259552951e393101ae1bc9072e4bbeb84f 10.0.0.2:6379@16379 slave 8e48a3ebd3082362642d81bd2c52c769e24eec36 0 1578042191000 7 connected
+```
+
+更加详细的容灾演练可参照[官网](https://redis.io/topics/cluster-tutorial)、 [博客](http://www.saily.top/2018/02/15/cache03/) 做水平扩容等演练。
 
