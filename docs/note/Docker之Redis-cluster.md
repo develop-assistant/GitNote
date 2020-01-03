@@ -237,7 +237,158 @@ M: 39d27f77e0e8102ab4d9d46cc9b26ba0d881247d 10.0.0.3:6379
 [OK] All 16384 slots covered.
 ```
 
+**查看网络配置**
+
+```
+docker network ls
+docker network inspect docker_redisnet
+```
+
+结果
+
+```
+[
+    {
+        "Name": "docker_redisnet",
+        "Id": "556b60eb1bb2170c89c203233cd44ff533c69d07c5ec3c9353ff78bbb80a978b",
+        "Created": "2020-01-03T08:09:08.3830724Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "10.0.0.0/16"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": true,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "00993eb1b306ef11195013afe79dd24c77db0923dff660038f88daaa57e4cee5": {
+                "Name": "redis7006",
+                "EndpointID": "994cfd5509e76bac7a38d494a0aab80ef3556e0de5e4c9f572bea9d8cfd99d23",
+                "MacAddress": "02:42:0a:00:00:07",
+                "IPv4Address": "10.0.0.7/16",
+                "IPv6Address": ""
+            },
+            "5be0ab87fda70c93659c76547eb4a672ccf99dd6d8511219568f53878ba9492e": {
+                "Name": "redis7002",
+                "EndpointID": "97b0e0bc5626a489e4cf8a102f489488ce09b1d62027cdc76c3ec6d7cff2cd78",
+                "MacAddress": "02:42:0a:00:00:03",
+                "IPv4Address": "10.0.0.3/16",
+                "IPv6Address": ""
+            },
+            "80e1f442a488f980c4a774838721d97c989dbec023853ea3010252ab62279453": {
+                "Name": "redis7003",
+                "EndpointID": "43507e4fd28bb01d821ad20bc6336d97e9925173c55c6a911356e0720bc735a6",
+                "MacAddress": "02:42:0a:00:00:04",
+                "IPv4Address": "10.0.0.4/16",
+                "IPv6Address": ""
+            },
+            "b2e67931f7542eb399ffb0c9ab988014c5acb4311636697a352fa73f7f6c4c1c": {
+                "Name": "redis7005",
+                "EndpointID": "1d46c8c6b67ccd54e8ebf4c058708e5a2d9bdd9d719a3f7f28dd96a0e435b617",
+                "MacAddress": "02:42:0a:00:00:06",
+                "IPv4Address": "10.0.0.6/16",
+                "IPv6Address": ""
+            },
+            "b3f196f958d788a86652e9814589a15f011b7353203d383ece1fe047e6c8a9cf": {
+                "Name": "redis7004",
+                "EndpointID": "388af22afa0070e72d93ef07fadb7e73c9957810476e2a5819dbb3798a7db2e9",
+                "MacAddress": "02:42:0a:00:00:05",
+                "IPv4Address": "10.0.0.5/16",
+                "IPv6Address": ""
+            },
+            "da6f83feb829acfad8f1f54be1c8beaa74293bde4ce6484e522298fc2160393d": {
+                "Name": "redis7001",
+                "EndpointID": "ee8ed8abcfb26425b271093e7b4e8c35f680621aa9457f775f53f1bdf0a3f345",
+                "MacAddress": "02:42:0a:00:00:02",
+                "IPv4Address": "10.0.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.network": "redisnet",
+            "com.docker.compose.project": "docker",
+            "com.docker.compose.version": "1.24.1"
+        }
+    }
+]
+```
 
 
-## 2. 容灾演练
+
+## 2. 集群测试
+
+**ping测试**
+
+```
+docker exec -it redis7001 redis-cli -h 10.0.0.7 -p 6379 -a 123456 ping
+```
+
+**redis测试**
+
+```
+➜  docker docker exec -it redis7001 redis-cli -h 10.0.0.4 -c -p 6379 -a 123456
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+10.0.0.4:6379> set key1 1
+-> Redirected to slot [9189] located at 10.0.0.3:6379
+OK
+10.0.0.3:6379>
+```
+
+> 注意：如果不用-c参数，则可能会报如下错误: (error) MOVED 9189 10.0.0.3:6379
+
+
+
+**查看集群状态**
+
+```
+10.0.0.3:6379> cluster nodes
+4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697 10.0.0.2:6379@16379 master - 0 1578040333000 1 connected 0-5460
+0a46bc61364ac7c7a1e42d907b79dfdb72b71bd7 10.0.0.6:6379@16379 slave 4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697 0 1578040331085 5 connected
+659b10c76b723da9caa33b51ad2f087739d481d5 10.0.0.4:6379@16379 master - 0 1578040332102 3 connected 10923-16383
+08d29202d75af825ebda488f254a29e2b51f8699 10.0.0.5:6379@16379 slave 659b10c76b723da9caa33b51ad2f087739d481d5 0 1578040331000 4 connected
+39d27f77e0e8102ab4d9d46cc9b26ba0d881247d 10.0.0.3:6379@16379 myself,master - 0 1578040332000 2 connected 5461-10922
+8e6b886399e51e6ca8b096ac63130642e56900a6 10.0.0.7:6379@16379 slave 39d27f77e0e8102ab4d9d46cc9b26ba0d881247d 0 1578040333120 6 connected
+```
+
+**查看slots**
+
+```
+10.0.0.3:6379> cluster slots
+1) 1) (integer) 0
+   2) (integer) 5460
+   3) 1) "10.0.0.2"
+      2) (integer) 6379
+      3) "4579ff67a2ae08275e66ac72eb5cfdbf6bb6b697"
+   4) 1) "10.0.0.6"
+      2) (integer) 6379
+      3) "0a46bc61364ac7c7a1e42d907b79dfdb72b71bd7"
+2) 1) (integer) 10923
+   2) (integer) 16383
+   3) 1) "10.0.0.4"
+      2) (integer) 6379
+      3) "659b10c76b723da9caa33b51ad2f087739d481d5"
+   4) 1) "10.0.0.5"
+      2) (integer) 6379
+      3) "08d29202d75af825ebda488f254a29e2b51f8699"
+3) 1) (integer) 5461
+   2) (integer) 10922
+   3) 1) "10.0.0.3"
+      2) (integer) 6379
+      3) "39d27f77e0e8102ab4d9d46cc9b26ba0d881247d"
+   4) 1) "10.0.0.7"
+      2) (integer) 6379
+      3) "8e6b886399e51e6ca8b096ac63130642e56900a6"
+```
 
