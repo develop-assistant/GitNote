@@ -346,7 +346,11 @@ OK
 10.0.0.3:6379>
 ```
 
-> 注意：如果不用-c参数，则可能会报如下错误: (error) MOVED 9189 10.0.0.3:6379
+> 注意：
+>
+> -a 代表密码
+>
+> 如果不用-c参数，则可能会报如下错误: (error) MOVED 9189 10.0.0.3:6379
 
 
 
@@ -390,5 +394,44 @@ OK
    4) 1) "10.0.0.7"
       2) (integer) 6379
       3) "8e6b886399e51e6ca8b096ac63130642e56900a6"
+```
+
+**查看集群状态**
+
+```
+10.0.0.3:6379> cluster info
+cluster_state:ok
+cluster_slots_assigned:16384
+cluster_slots_ok:16384
+cluster_slots_pfail:0
+cluster_slots_fail:0
+cluster_known_nodes:6
+cluster_size:3
+cluster_current_epoch:6
+cluster_my_epoch:2
+cluster_stats_messages_ping_sent:3021
+cluster_stats_messages_pong_sent:2989
+cluster_stats_messages_meet_sent:1
+cluster_stats_messages_sent:6011
+cluster_stats_messages_ping_received:2985
+cluster_stats_messages_pong_received:3022
+cluster_stats_messages_meet_received:4
+cluster_stats_messages_received:6011
+```
+
+**试验读写分离**
+
+试试看，发现读不到，原来在redis cluster中，如果你要在slave读取数据，那么需要带先执行`readonly`指令，再`get key1`。
+
+```
+➜  docker docker exec -it redis7001 redis-cli -h 10.0.0.7 -p 6379 -a 123456
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+10.0.0.7:6379> get key1
+(error) MOVED 9189 10.0.0.3:6379
+10.0.0.7:6379> readonly
+OK
+10.0.0.7:6379> get key1
+"1"
+10.0.0.7:6379>
 ```
 
