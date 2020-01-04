@@ -28,6 +28,8 @@
 * [Docker之Kafka集群搭建](note/Docker之Kafka集群搭建.md)
 * [Docker之Redis哨兵](note/Docker之Redis哨兵.md)
 * [Docker之Redis-cluster](note/Docker之Redis-cluster.md)
+* [Docker之Nginx](note/Docker之Nginx.md)
+* [Docker之openresty](note/Docker之openresty.md)
 
 ### Mysql
 
