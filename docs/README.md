@@ -34,6 +34,7 @@
 * [Docker之Redis-cluster](note/Docker之Redis-cluster.md)
 * [Docker之Nginx](note/Docker之Nginx.md)
 * [Docker之openresty](note/Docker之openresty.md)
+* [Docker之Mysql主从](note/Docker之Mysql主从.md)
 
 ### Mysql
 
