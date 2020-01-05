@@ -20,7 +20,10 @@
 * [面试-JVM](note/深入理解java虚拟机.md)
 * [面试-Kafka](note/Kafka.md)
 * [面试-NIO](note/NIO的理解.md)
-* [面试-Semaphore](note/Semaphore的使用方法.md)
+
+### 并发
+
+- [Semaphore的使用方法](note/Semaphore的使用方法.md)
 
 ### Docker
 
@@ -41,6 +44,7 @@
 
 * [Redis-数据类型](note/Redis-数据类型.md)
 * [Redis-高可用](note/Redis高可用.md)
+* [Redis使用lua脚本](note/Redis使用lua脚本.md)
 
 ### 设计模式
 
