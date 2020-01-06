@@ -16,6 +16,7 @@ services:
       - "3306:3306"
     volumes:
       - "./mysql/master/my.cnf:/etc/my.cnf"
+      - "./mysql/master/data:/var/lib/mysql"
     links:
       - mysql-slave
       
@@ -28,6 +29,7 @@ services:
       - "3406:3306"
     volumes:
       - "./mysql/slave/my.cnf:/etc/my.cnf"
+      - "./mysql/slave/data:/var/lib/mysql"
 
 ```
 
