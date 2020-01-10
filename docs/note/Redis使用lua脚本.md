@@ -6,7 +6,7 @@ Redis在2.6推出了脚本功能，允许开发者使用Lua语言编写脚本传
 - 2.原子操作：Redis会将整个脚本作为一个整体执行，中间不会被其他命令插入。
 - 3.复用：客户端发送的脚本会永久存储在Redis中，意味着其他客户端可以复用这一脚本而不需要使用代码完成同样的逻辑。
 
-
+> 客户端如果想执行Lua脚本，首先 在客户端编写好Lua脚本代码，然后把脚本作为字符串发送给服务端，服务 端会将执行结果返回给客户端
 
 实现一个访问频率控制，某个ip在短时间内频繁访问页面，需要记录并检测出来，就可以通过Lua脚本高效的实现。
 
@@ -55,6 +55,16 @@ Warning: Using a password with '-a' or '-u' option on the command line interface
 root@469f2a22132c:/data# redis-cli -a 123456 -c --eval ratelimiting.lua rate.limitingl:127.0.0.1 , 10 3
 Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
 (integer) 0
+```
+
+
+
+本案例只是简单的介绍redis使用lua脚本，实际项目中lua脚本加载到redis内存后通过evalsha调用，避免重复加载。如下:
+
+```
+# redis-cli script load "$(cat lua_get.lua)" "7413dc2440db1fea7c0a0bde841fa68eefaf149c"redis-cli script load "$(cat lua_get.lua)"
+
+127.0.0.1:6379> evalsha 7413dc2440db1fea7c0a0bde841fa68eefaf149c 1 redis world "hello redisworld"
 ```
 
 
