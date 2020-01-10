@@ -15,67 +15,67 @@
 
 ### 面试
 
-* [面试-并发编程](note/面试-并发编程.md)
-* [面试-反射](note/反射.md)
-* [面试-JVM](note/深入理解java虚拟机.md)
-* [面试-Kafka](note/Kafka.md)
-* [面试-NIO](note/NIO的理解.md)
+* [面试-并发编程](draft/面试-并发编程.md)
+* [面试-反射](draft/反射.md)
+* [面试-JVM](draft/深入理解java虚拟机.md)
+* [面试-Kafka](draft/Kafka.md)
+* [面试-NIO](draft/NIO的理解.md)
 
 ### 并发
 
-- [Semaphore的使用方法](note/Semaphore的使用方法.md)
+- [Semaphore的使用方法](draft/Semaphore的使用方法.md)
 
 ### Docker
 
-* [Docker搭建私有云](note/Docker搭建私有云.md)
-* [Docker之Zookeeper集群搭建](note/Docker之Zookeeper集群搭建.md)
-* [Docker之Kafka集群搭建](note/Docker之Kafka集群搭建.md)
-* [Docker之Redis哨兵](note/Docker之Redis哨兵.md)
-* [Docker之Redis-cluster](note/Docker之Redis-cluster.md)
-* [Docker之Nginx](note/Docker之Nginx.md)
-* [Docker之openresty](note/Docker之openresty.md)
-* [Docker之Mysql主从](note/Docker之Mysql主从.md)
+* [Docker搭建私有云](draft/Docker搭建私有云.md)
+* [Docker之Zookeeper集群搭建](draft/Docker之Zookeeper集群搭建.md)
+* [Docker之Kafka集群搭建](draft/Docker之Kafka集群搭建.md)
+* [Docker之Redis哨兵](draft/Docker之Redis哨兵.md)
+* [Docker之Redis-cluster](draft/Docker之Redis-cluster.md)
+* [Docker之Nginx](draft/Docker之Nginx.md)
+* [Docker之openresty](draft/Docker之openresty.md)
+* [Docker之Mysql主从](draft/Docker之Mysql主从.md)
 
 ### Mysql
 
-* [Mysql索引](note/mysql索引.md)
-* [Mysql事务](note/mysql事务.md)
-* [Mysql日志系统](note/Mysql日志系统.md)
+* [Mysql索引](draft/mysql索引.md)
+* [Mysql事务](draft/mysql事务.md)
+* [Mysql日志系统](draft/Mysql日志系统.md)
 
 ### Redis
 
-* [Redis-数据类型](note/Redis-数据类型.md)
-* [Redis-高可用](note/Redis高可用.md)
-* [Redis使用lua脚本](note/Redis使用lua脚本.md)
+* [Redis-数据类型](draft/Redis-数据类型.md)
+* [Redis-高可用](draft/Redis高可用.md)
+* [Redis使用lua脚本](draft/Redis使用lua脚本.md)
 
 ### 设计模式
 
-* [单例模式](note/设计模式-单例.md)
-* [工厂模式](note/工厂模式.md)
-* [动态代理](note/动态代理.md)
-* [Builder模式](note/Builder.md)
+* [单例模式](draft/设计模式-单例.md)
+* [工厂模式](draft/工厂模式.md)
+* [动态代理](draft/动态代理.md)
+* [Builder模式](draft/Builder.md)
 
 ### 数据结构与算法
 
-* [二分法](note/二分法.md)
-* [二叉树算法](note/二叉树算法.md)
-* [冒泡排序](note/冒泡排序.md)
-* [插入排序](note/插入排序.md)
-* [选择排序](note/选择排序.md)
-* [快速排序](note/快速排序.md)
-* [归并排序](note/归并排序.md)
-* [位图法](note/位图法.md)
+* [二分法](draft/二分法.md)
+* [二叉树算法](draft/二叉树算法.md)
+* [冒泡排序](draft/冒泡排序.md)
+* [插入排序](draft/插入排序.md)
+* [选择排序](draft/选择排序.md)
+* [快速排序](draft/快速排序.md)
+* [归并排序](draft/归并排序.md)
+* [位图法](draft/位图法.md)
 
 ### 源码
 
-* [IOC源码解析](note/IOC源码解析.md)
-* [Mybatis源码解析](note/Mybatis源码解析.md)
+* [IOC源码解析](draft/IOC源码解析.md)
+* [Mybatis源码解析](draft/Mybatis源码解析.md)
 
 
 
 ### 分布式
 
-- [分布式选举算法](note/分布式选举算法.md)
+- [分布式选举算法](draft/分布式选举算法.md)
 
 
 
