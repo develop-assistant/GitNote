@@ -27,6 +27,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
       KAFKA_LISTENERS: PLAINTEXT://kafka1:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
     volumes:
       - "./kafka/kafka1/docker.sock:/var/run/docker.sock"
       - "./kafka/kafka1/data/:/kafka"
@@ -52,6 +53,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
       KAFKA_LISTENERS: PLAINTEXT://kafka2:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
     volumes:
       - "./kafka/kafka2/docker.sock:/var/run/docker.sock"
       - "./kafka/kafka2/data/:/kafka"
@@ -76,6 +78,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
       KAFKA_LISTENERS: PLAINTEXT://kafka3:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
     volumes:
       - "./kafka/kafka3/docker.sock:/var/run/docker.sock"
       - "./kafka/kafka3/data/:/kafka"
@@ -109,6 +112,13 @@ networks:
 ```
 
 > 注意：当外部app访问docker环境中的kafka时，需改变KAFKA_LISTENERS: PLAINTEXT://kafka1:9092为宿主机ip:port。例如  KAFKA_LISTENERS: PLAINTEXT://127.0.0.1:9093
+>
+> 只需内网/内外网同时使用修改这里
+>
+>       KAFKA_LISTENERS: PLAINTEXT://kafka3:9092
+>       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092
+
+
 
 启动集群**
 
@@ -292,7 +302,7 @@ cd /opt/kafka/
 ./bin/kafka-topics.sh --list --zookeeper zoo1:2181
 
 # 创建主题。--replication-factor副本数 --partitions分区数。消费者数<=partitions分区数，replication<=broker数
-./bin/kafka-topics.sh --create --zookeeper zoo1:2181 --replication-factor 3 --partitions 3 --topic test
+./bin/kafka-topics.sh --create --zookeeper zoo1:2181,zoo2:2181,zoo3:2181 --replication-factor 3 --partitions 3 --topic test
 
 # 生产消息
 ./bin/kafka-console-producer.sh --broker-list kafka1:9092 --topic test
