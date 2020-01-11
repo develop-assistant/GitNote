@@ -108,7 +108,9 @@ networks:
     driver: bridge
 ```
 
-**启动集群**
+> 注意：当外部app访问docker环境中的kafka时，需改变KAFKA_LISTENERS: PLAINTEXT://kafka1:9092为宿主机ip:port。例如  KAFKA_LISTENERS: PLAINTEXT://127.0.0.1:9093
+
+启动集群**
 
 ```
 docker-compose -f docker-compose-kafka.yml up -d
