@@ -5,16 +5,16 @@
 **docker-compose.yml**
 
 ```yml
-version: '3.1'
+version: '3.7'
 
 services:
   zoo1:
     image: zookeeper
-    restart: always
+    restart: unless-stopped
     hostname: zoo1
     container_name: zoo1
     ports:
-      - 2184:2181
+      - 2182:2181
     environment:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
@@ -22,15 +22,15 @@ services:
       - ./zookeeper/zoo1/data:/data
       - ./zookeeper/zoo1/datalog:/datalog
     networks:
-      - zk-net
+      - net
 
   zoo2:
     image: zookeeper
-    restart: always
+    restart: unless-stopped
     hostname: zoo2
     container_name: zoo2
     ports:
-      - 2182:2181
+      - 2183:2181
     environment:
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
@@ -38,15 +38,15 @@ services:
       - ./zookeeper/zoo2/data:/data
       - ./zookeeper/zoo2/datalog:/datalog
     networks:
-      - zk-net
+      - net
 
   zoo3:
     image: zookeeper
-    restart: always
+    restart: unless-stopped
     hostname: zoo3
     container_name: zoo3
     ports:
-      - 2183:2181
+      - 2184:2181
     environment:
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
@@ -54,10 +54,12 @@ services:
       - ./zookeeper/zoo3/data:/data
       - ./zookeeper/zoo3/datalog:/datalog
     networks:
-      - zk-net
+      - net
 
 networks:
-  zk-net:
+  app_net:
+    external: true
+  net:
     driver: bridge
 ```
 

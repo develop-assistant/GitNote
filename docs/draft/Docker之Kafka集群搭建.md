@@ -5,13 +5,19 @@
 Docker-compose-kafka.yml
 
 ```yml
-version: '3.1'
+version: '3.7'
+
+networks:
+  app_net:
+    external: true
+  net:
+    driver: bridge
 
 services:
 
   kafka1:
     image: wurstmeister/kafka
-    restart: always
+    restart: unless-stopped
     container_name: kafka1
     ports:
       - "9093:9092"
@@ -21,22 +27,20 @@ services:
       - zoo3
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ADVERTISED_HOST_NAME: kafka1
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_HOST_NAME: kafka1
-      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-      KAFKA_LISTENERS: PLAINTEXT://kafka1:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
+      KAFKA_ADVERTISED_HOST_NAME: 192.168.124.5                   ## 修改:宿主机IP
+      KAFKA_ADVERTISED_PORT: 9093                                 ## 修改:宿主机映射port
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.124.5:9093    ## 修改:宿主机IP
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
     volumes:
       - "./kafka/kafka1/docker.sock:/var/run/docker.sock"
       - "./kafka/kafka1/data/:/kafka"
     networks:
-      - zk-net
+      - net
 
 
   kafka2:
     image: wurstmeister/kafka
-    restart: always
+    restart: unless-stopped
     container_name: kafka2
     ports:
       - "9094:9092"
@@ -46,21 +50,19 @@ services:
       - zoo3
     environment:
       KAFKA_BROKER_ID: 2
-      KAFKA_ADVERTISED_HOST_NAME: kafka2
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_HOST_NAME: kafka2
-      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-      KAFKA_LISTENERS: PLAINTEXT://kafka2:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092
+      KAFKA_ADVERTISED_HOST_NAME: 192.168.124.5                 ## 修改:宿主机IP
+      KAFKA_ADVERTISED_PORT: 9094                               ## 修改:宿主机映射port
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.124.5:9094   ## 修改:宿主机IP
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
     volumes:
       - "./kafka/kafka2/docker.sock:/var/run/docker.sock"
       - "./kafka/kafka2/data/:/kafka"
     networks:
-      - zk-net
+      - net
 
   kafka3:
     image: wurstmeister/kafka
-    restart: always
+    restart: unless-stopped
     container_name: kafka3
     ports:
       - "9095:9092"
@@ -70,21 +72,19 @@ services:
       - zoo3
     environment:
       KAFKA_BROKER_ID: 3
-      KAFKA_ADVERTISED_HOST_NAME: kafka3
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_HOST_NAME: kafka3
-      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-      KAFKA_LISTENERS: PLAINTEXT://kafka3:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092
+      KAFKA_ADVERTISED_HOST_NAME: 192.168.124.5                 ## 修改:宿主机IP
+      KAFKA_ADVERTISED_PORT: 9095                              ## 修改:宿主机映射port
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.124.5:9095   ## 修改:宿主机IP
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
     volumes:
       - "./kafka/kafka3/docker.sock:/var/run/docker.sock"
       - "./kafka/kafka3/data/:/kafka"
     networks:
-      - zk-net
+      - net
 
   kafka-manager:
     image: sheepkiller/kafka-manager:latest
-    restart: always
+    restart: unless-stopped
     container_name: kafka-manager
     hostname: kafka-manager
     ports:
@@ -98,22 +98,11 @@ services:
       - zoo2
       - zoo3
     environment:
-      ZK_HOSTS: zoo1:2181,zoo2:2181,zoo3:2181
-      KAFKA_BROKERS: kafka1:9092,kafka2:9092,kafka3:9092
+      ZK_HOSTS: 192.168.124.5:2182,192.168.124.5:2183,192.168.124.5:2184                 ## 修改:宿主机IP
     networks:
-      - zk-net
+      - net
 
-networks:
-  zk-net:
-    driver: bridge
 ```
-
-> 注意：当外部app访问docker环境中的kafka时，需改变KAFKA_LISTENERS: PLAINTEXT://kafka1:9092为宿主机ip:port。例如  KAFKA_LISTENERS: PLAINTEXT://127.0.0.1:9093
->
-> 只需内网/内外网同时使用修改这里
->
->       KAFKA_LISTENERS: PLAINTEXT://kafka3:9092
->       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092
 
 
 
