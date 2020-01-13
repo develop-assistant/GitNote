@@ -8,7 +8,7 @@ Docker-compose-kafka.yml
 version: '3.7'
 
 networks:
-  app_net:
+  docker_net:
     external: true
   net:
     driver: bridge
@@ -29,7 +29,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ADVERTISED_HOST_NAME: 192.168.124.5                   ## 修改:宿主机IP
       KAFKA_ADVERTISED_PORT: 9093                                 ## 修改:宿主机映射port
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.124.5:9093    ## 修改:宿主机IP
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.124.5:9093    ## 绑定发布订阅的端口。修改:宿主机IP
       KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
     volumes:
       - "./kafka/kafka1/docker.sock:/var/run/docker.sock"
@@ -98,7 +98,8 @@ services:
       - zoo2
       - zoo3
     environment:
-      ZK_HOSTS: 192.168.124.5:2182,192.168.124.5:2183,192.168.124.5:2184                 ## 修改:宿主机IP
+      ZK_HOSTS: zoo1:2181,zoo2:2181,zoo3:2181                 ## 修改:宿主机IP
+      TZ: CST-8
     networks:
       - net
 
@@ -295,6 +296,9 @@ cd /opt/kafka/
 
 # 消费消息
 ./bin/kafka-console-consumer.sh --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092 --topic test --from-beginning
+
+# 查看偏移量
+./kafka-consumer-groups.sh --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092 --describe --group group_id1
 
 # 查看topic详情
 ./bin/kafka-topics.sh --zookeeper zoo1:2181,zoo2:2181,zoo3:2181 --describe --topic test

@@ -7,6 +7,12 @@
 ```yml
 version: '3.7'
 
+networks:
+  docker_net:
+    external: true
+  net:
+    driver: bridge
+
 services:
   zoo1:
     image: zookeeper
@@ -56,11 +62,6 @@ services:
     networks:
       - net
 
-networks:
-  app_net:
-    external: true
-  net:
-    driver: bridge
 ```
 
 **校验配置**
