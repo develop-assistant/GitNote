@@ -73,6 +73,10 @@
 
 
 
+### Kafka
+
+- [Spring集成kafka](draft/Springboot集成kafka)
+
 ### 分布式
 
 - [分布式选举算法](draft/分布式选举算法.md)
