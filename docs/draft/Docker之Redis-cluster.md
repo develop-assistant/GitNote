@@ -662,3 +662,6 @@ networks:
 docker exec -it redis7001 redis-cli -p 7001 -a 123456 --cluster create 192.168.124.5:7001 192.168.124.5:7002 192.168.124.5:7003 192.168.124.5:7004 192.168.124.5:7005 192.168.124.5:7006 --cluster-replicas 1
 ```
 
+## 参考
+
+- https://tvzr.com/archives/595
