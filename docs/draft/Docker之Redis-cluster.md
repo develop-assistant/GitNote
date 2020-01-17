@@ -489,3 +489,176 @@ d7f6f7ae1ad5577856660d35b5aff6c9ae6f0424 10.0.0.7:6379@16379 slave afb9cd705091e
 
 更加详细的容灾演练可参照[官网](https://redis.io/topics/cluster-tutorial)、 [博客](http://www.saily.top/2018/02/15/cache03/) 做水平扩容等演练。
 
+
+
+## 4. 宿主机测试
+
+**redis-cluster.tmpl**
+
+```
+# redis端口
+port ${PORT}
+# 关闭保护模式
+protected-mode no
+# 开启集群
+cluster-enabled yes
+# 集群节点配置
+cluster-config-file nodes.conf
+# 超时
+cluster-node-timeout 5000
+# 集群节点IP host模式为宿主机IP
+cluster-announce-ip 192.168.124.5
+# 集群节点端口 7001 - 7006
+cluster-announce-port ${PORT}
+cluster-announce-bus-port 1${PORT}
+# 开启 appendonly 备份模式
+appendonly yes
+# 每秒钟备份
+appendfsync everysec
+# 对aof文件进行压缩时，是否执行同步操作
+no-appendfsync-on-rewrite no
+# 当目前aof文件大小超过上一次重写时的aof文件大小的100%时会再次进行重写
+auto-aof-rewrite-percentage 100
+# 重写前AOF文件的大小最小值 默认 64mb
+auto-aof-rewrite-min-size 64mb
+```
+
+**redis-clsuter-config.sh**
+
+```
+for port in `seq 7001 7006`; do \
+  mkdir -p ./redis-cluster/${port}/conf \
+  && PORT=${port} envsubst < ./redis-cluster.tmpl > ./redis-cluster/${port}/conf/redis.conf \
+  && mkdir -p ./redis-cluster/${port}/data; \
+done
+```
+
+**docker-compose-redis-cluster.yml**
+
+```
+version: '3.7'
+
+services:
+  redis7001:
+    image: 'redis'
+    container_name: redis7001
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7001/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7001/data:/data
+    ports:
+      - "7001:7001"
+      - "17001:17001"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+    networks:
+      redisnet:
+        ipv4_address: 172.18.0.2
+
+  redis7002:
+    image: 'redis'
+    container_name: redis7002
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7002/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7002/data:/data
+    ports:
+      - "7002:7002"
+      - "17002:17002"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+    networks:
+      redisnet:
+        ipv4_address: 172.18.0.3
+
+  redis7003:
+    image: 'redis'
+    container_name: redis7003
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7003/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7003/data:/data
+    ports:
+      - "7003:7003"
+      - "17003:17003"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+    networks:
+      redisnet:
+        ipv4_address: 172.18.0.4
+
+  redis7004:
+    image: 'redis'
+    container_name: redis7004
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7004/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7004/data:/data
+    ports:
+      - "7004:7004"
+      - "17004:17004"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+    networks:
+      redisnet:
+        ipv4_address: 172.18.0.5
+
+  redis7005:
+    image: 'redis'
+    container_name: redis7005
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7005/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7005/data:/data
+    ports:
+      - "7005:7005"
+      - "17005:17005"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+    networks:
+      redisnet:
+        ipv4_address: 172.18.0.6
+
+  redis7006:
+    image: 'redis'
+    container_name: redis7006
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7006/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7006/data:/data
+    ports:
+      - "7006:7006"
+      - "17006:17006"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+    networks:
+      redisnet:
+        ipv4_address: 172.18.0.7
+
+networks:
+  redisnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+
+```
+
+**配置集群**
+
+```
+docker exec -it redis7001 redis-cli -p 7001 -a 123456 --cluster create 192.168.124.5:7001 192.168.124.5:7002 192.168.124.5:7003 192.168.124.5:7004 192.168.124.5:7005 192.168.124.5:7006 --cluster-replicas 1
+```
+
