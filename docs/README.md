@@ -77,6 +77,7 @@
 
 - [Spring集成kafka](draft/Springboot集成kafka)
 - [Spring集成Cache](draft/Springboot集成Cache)
+- [Spring集成Hystrix](draft/Springboot集成Hystrix)
 
 ### 分布式
 
