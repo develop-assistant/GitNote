@@ -245,21 +245,28 @@ public class DataService {
     public String getData(String key) {
 
         String data = null;
+
+        // 查找一级缓存
         data = cacheService.getDataFromRedisCache(key);
         if (!StringUtils.isEmpty(data)) {
             log.info("从[redis]里获取数据: {}", data);
             return data;
         }
 
+        // 查找二级缓存
         data = cacheService.getDataFromLocalCache(key);
         if (!StringUtils.isEmpty(data)) {
             log.info("从[ehcache]中获取数据: {}", data);
+            // 更新一级缓存
+            cacheService.saveData2RedisCache(key, data);
             return data;
         }
 
+        // 查询数据库
         data = cacheService.getDataFromDB(key);
         if (!StringUtils.isEmpty(data)) {
             log.info("从[db]中获取数据: {}", data);
+            // 更新一二级缓存
             cacheService.saveData2LocalCache(key, data);
             cacheService.saveData2RedisCache(key, data);
         }
@@ -294,31 +301,33 @@ class CacheServiceTest {
 **结果**
 
 ```log
-2020-01-18 18:06:02.818  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[db]中获取数据: 【data】= k1
-2020-01-18 18:06:02.818  INFO 67190 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[ehcache]
-2020-01-18 18:06:02.827  INFO 67190 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[redis]
-2020-01-18 18:06:02.835  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:07.845  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
-2020-01-18 18:06:07.845  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:12.852  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
-2020-01-18 18:06:12.852  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:17.862  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[ehcache]中获取数据: 【data】= k1
-2020-01-18 18:06:17.862  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:22.872  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[db]中获取数据: 【data】= k1
-2020-01-18 18:06:22.873  INFO 67190 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[ehcache]
-2020-01-18 18:06:22.873  INFO 67190 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[redis]
-2020-01-18 18:06:22.876  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:27.883  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
-2020-01-18 18:06:27.884  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:32.890  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[ehcache]中获取数据: 【data】= k1
-2020-01-18 18:06:32.890  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:37.901  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[ehcache]中获取数据: 【data】= k1
-2020-01-18 18:06:37.901  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:42.906  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[db]中获取数据: 【data】= k1
-2020-01-18 18:06:42.906  INFO 67190 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[ehcache]
-2020-01-18 18:06:42.906  INFO 67190 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[redis]
-2020-01-18 18:06:42.911  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
-2020-01-18 18:06:47.917  INFO 67190 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
-2020-01-18 18:06:47.917  INFO 67190 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:08.025  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[db]中获取数据: 【data】= k1
+2020-01-18 18:40:08.026  INFO 67416 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[ehcache]
+2020-01-18 18:40:08.033  INFO 67416 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[redis]
+2020-01-18 18:40:08.040  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:13.046  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
+2020-01-18 18:40:13.046  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:18.054  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[ehcache]中获取数据: 【data】= k1
+2020-01-18 18:40:18.054  INFO 67416 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[redis]
+2020-01-18 18:40:18.061  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:23.070  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
+2020-01-18 18:40:23.071  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:28.081  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[db]中获取数据: 【data】= k1
+2020-01-18 18:40:28.081  INFO 67416 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[ehcache]
+2020-01-18 18:40:28.082  INFO 67416 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[redis]
+2020-01-18 18:40:28.085  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:33.091  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
+2020-01-18 18:40:33.092  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:38.097  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
+2020-01-18 18:40:38.097  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:43.100  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[ehcache]中获取数据: 【data】= k1
+2020-01-18 18:40:43.101  INFO 67416 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[redis]
+2020-01-18 18:40:43.104  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:48.107  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[redis]里获取数据: 【data】= k1
+2020-01-18 18:40:48.107  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
+2020-01-18 18:40:53.116  INFO 67416 --- [           main] com.idcmind.ants.service.DataService     : 从[db]中获取数据: 【data】= k1
+2020-01-18 18:40:53.116  INFO 67416 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[ehcache]
+2020-01-18 18:40:53.116  INFO 67416 --- [           main] com.idcmind.ants.service.CacheService    : 缓存到[redis]
+2020-01-18 18:40:53.119  INFO 67416 --- [           main] c.idcmind.ants.service.CacheServiceTest  : ====================================
 ```
 
