@@ -213,6 +213,21 @@ mysql> select version();
 1 row in set (0.00 sec)
 ```
 
+查看表结构
+
+```
+mysql> desc test_explain_type;
++-------+---------+------+-----+---------+----------------+
+| Field | Type    | Null | Key | Default | Extra          |
++-------+---------+------+-----+---------+----------------+
+| id    | int(11) | NO   | PRI | NULL    | auto_increment |
+| a     | int(11) | NO   | MUL | NULL    |                |
+| b     | int(11) | NO   |     | NULL    |                |
+| c     | int(11) | NO   |     | NULL    |                |
++-------+---------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+```
+
 执行查询计划
 
 ```mysql
