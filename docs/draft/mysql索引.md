@@ -479,5 +479,6 @@ select * from t where name = 'lisi';
 - https://www.cnblogs.com/vianzhang/p/7922426.html
 - http://zhongmingmao.me/2019/09/24/java-performance-high-performance-sql/
 - https://tech.meituan.com/2014/06/30/mysql-index.html
+- https://mp.weixin.qq.com/s/ny8rE5-w57rsZiRxI6_Aqg
 
 
