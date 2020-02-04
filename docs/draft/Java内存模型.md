@@ -12,7 +12,7 @@
 
 因此，为了“压榨”处理的性能，达到“高并发”的效果，在处理器和存储设备之间加入了高速缓存（cache）来作为缓冲。
 
-![img](https://mmbiz.qpic.cn/mmbiz_jpg/CmnN7FKTMS7ZLtjmDntX8QJloQiaETeFkBE5aWJAvRqoaTuVXn09GbSKX1tkvHHCXqp70YykIeAD4V6Qb7KcRUQ/640?wx_fmt=jpeg&wxfrom=5&wx_lazy=1&wx_co=1)
+![计算机硬件内存架构](../assets/计算机硬件内存架构-0823734.jpg)
 
 将运算需要使用到的数据复制到缓存中，让运算能够快速进行。当运算完成之后，再将缓存中的结果写入主内存，这样运算器就不用等待主内存的读写操作了。
 
@@ -24,17 +24,19 @@ Java内存模型即Java Memory Model，简称JMM。用来屏蔽掉各种硬件�
 
 JMM定义了线程和主内存之间的抽象关系：线程之间的共享变量存储在主内存（main memory）中，每个线程都有一个私有的本地内存（local memory），本地内存中存储了该线程以读/写共享变量的副本。本地内存是JMM的一个抽象概念，并不真实存在。它涵盖了缓存，写缓冲区，寄存器以及其他的硬件和编译器优化。
 
-![img](https://mmbiz.qpic.cn/mmbiz_jpg/CmnN7FKTMS7ZLtjmDntX8QJloQiaETeFkAOaoqnsUETibeAXDjUaw2rEDQTZU7xEvrlh0s7WXXTYDdDSficwoP7dQ/640?wx_fmt=jpeg&wxfrom=5&wx_lazy=1&wx_co=1)
+![Java内存模型](../assets/Java内存模型.jpg)
 
 JMM与Java内存结构并不是同一个层次的内存划分，两者基本没有关系。如果一定要勉强对应，那从变量、主内存、工作内存的定义看，主内存主要对应Java堆中的对象实例数据部分，工作内存则对应虚拟机栈的部分区域。
 
-![img](https://mmbiz.qpic.cn/mmbiz_jpg/CmnN7FKTMS7ZLtjmDntX8QJloQiaETeFkAy1OWrxteW6TBbLa5VlHPd84Me4lg8z2FXibFwOZ1GqT4bFTia0QM6uw/640?wx_fmt=jpeg&wxfrom=5&wx_lazy=1&wx_co=1)
+![java内存模型细化](../assets/java内存模型细化.jpg)
 
 主内存：主要存储的是Java实例对象，所有线程创建的实例对象都存放在主内存中，不管该实例对象是成员变量还是方法中的本地变量(也称局部变量)，当然也包括了共享的类信息、常量、静态变量。共享数据区域，多条线程对同一个变量进行访问可能会发现线程安全问题。
 
 工作内存：主要存储当前方法的所有本地变量信息(工作内存中存储着主内存中的变量副本拷贝)，每个线程只能访问自己的工作内存，即线程中的本地变量对其它线程是不可见的，就算是两个线程执行的是同一段代码，它们也会各自在自己的工作内存中创建属于当前线程的本地变量，当然也包括了字节码行号指示器、相关Native方法的信息。由于工作内存是每个线程的私有数据，线程间无法相互访问工作内存，因此存储在工作内存的数据不存在线程安全问题。
 
-JMM模型与硬件模型直接的对照关系可简化为下图： ![img](data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==)
+JMM模型与硬件模型直接的对照关系可简化为下图：
+
+![JMM模型与硬件模型直接的对照关系图](../assets/JMM模型与硬件模型直接的对照关系图.png) ![img](data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==)
 
 ## 内存之间的交互操作
 
