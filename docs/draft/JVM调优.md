@@ -103,5 +103,54 @@ jvisualvm
 
 
 
+## 栈溢出模拟
+
+栈空间不足时，需要分下面两种情况处理：
+
+- 线程请求的栈深度大于虚拟机所允许的最大深度，将抛出StackOverflowError
+- 虚拟机在扩展栈深度时无法申请到足够的内存空间，将抛出OutOfMemberError
+
+附：当前大部分的虚拟机栈都是可动态扩展的。
+
+1、栈空间不足——StackOverflowError实例
+
+```
+/**
+ * 栈空间不足溢出
+ *
+ * 执行结果：
+ *
+ * 递归次数：18117
+ * Exception in thread "main" java.lang.StackOverflowError
+ * 	at com.example.demojava.demo.StackOverflowErrorDemo.sofMethod(StackOverflowErrorDemo.java:13)
+ */
+public class StackOverflowErrorDemo {
+
+    int depth = 0;
+
+    public void sofMethod(){
+        depth ++ ;
+        sofMethod();
+    }
+
+    public static void main(String[] args) {
+        StackOverflowErrorDemo test = null;
+        try {
+            test = new StackOverflowErrorDemo();
+            test.sofMethod();
+        } finally {
+            System.out.println("递归次数："+test.depth);
+        }
+    }
+}
+```
+
+
+我们可以看到，sofMethod()方法递归调用了982次后，出现了StackOverflowError。
+
+2、栈空间不足——OutOfMemberError实例
+
+暂不知道怎么模拟
+
 
 
