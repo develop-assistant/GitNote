@@ -199,3 +199,9 @@ A garbage collection root is an object that is accessible from outside the heap.
 
 
 
+## 参考
+
+- https://crowhawk.github.io/2017/08/15/jvm_3/
+
+
+
