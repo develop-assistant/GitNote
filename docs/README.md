@@ -24,7 +24,7 @@
 * [面试-聊聊Java的GC机制](draft/聊聊Java的GC机制.md)
 * [面试-SQL慢查询的解决思路](draft/SQL慢查询的解决思路.md)
 * [面试-Hashmap底层实现原理](draft/Hashmap底层实现原理.md)
-* [2020春招面试总结](draft/2020春季Java面试总结.md)
+* [面试题](draft/面试题.md)
 
 
 
@@ -91,6 +91,12 @@
 ### 分布式
 
 - [分布式选举算法](draft/分布式选举算法.md)
+
+
+
+### JVM
+
+- [JVM调优](draft/JVM调优)
 
 
 
