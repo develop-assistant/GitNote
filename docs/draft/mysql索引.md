@@ -473,6 +473,12 @@ select * from t where name = 'lisi';
 
 
 
+### 联合索引
+
+联合索引需要最左匹配。详见[联合索引](https://mp.weixin.qq.com/s?__biz=MzI4Njc5NjM1NQ==&mid=2247490706&idx=1&sn=d98cd10845923c2bf5d933a8fd963cb5&chksm=ebd623bedca1aaa87256f9729192d024897ba70bc38a0abc314cd59b1a1349c52ec33f1074a1&scene=21#wechat_redirect)
+
+
+
 # 参考
 
 - http://blog.codinglabs.org/articles/theory-of-mysql-index.html
