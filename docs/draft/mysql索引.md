@@ -487,5 +487,6 @@ select * from t where name = 'lisi';
 - https://tech.meituan.com/2014/06/30/mysql-index.html
 - https://mp.weixin.qq.com/s/ny8rE5-w57rsZiRxI6_Aqg
 - https://www.cnblogs.com/duanxz/p/3799045.html
+- https://www.cnblogs.com/duanxz/p/3799045.html
 
 
