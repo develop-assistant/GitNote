@@ -154,3 +154,74 @@ public class StackOverflowErrorDemo {
 
 
 
+## 永久代溢出模拟
+
+永久代溢出可以分为两种情况，第一种是常量池溢出，第二种是方法区溢出。
+
+**1、永久代溢出——常量池溢出**
+
+**2、永久代溢出——方法区溢出**
+
+```
+/**
+ * java7 方法区溢出
+ * -XX:PermSize=10m -XX:MaxPermSize=10m
+ */
+public class MethodAreaOOMTest {
+
+    public static void main(String[] args) {
+        int i=0;
+        try {
+            while(true){
+                Enhancer enhancer = new Enhancer();
+                enhancer.setSuperclass(OOMObject.class);
+                enhancer.setUseCache(false);
+                enhancer.setCallback(new MethodInterceptor() {
+                    @Override
+                    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+                        return proxy.invokeSuper(obj, args);
+                    }
+                });
+                enhancer.create();
+                i++;
+            }
+        } finally{
+            System.out.println("运行次数："+i);
+        }
+    }
+
+    static class OOMObject{
+
+    }
+}
+```
+
+
+
+**3、元空间-直接内存溢出**
+
+```
+/**
+ * -Xms20m -Xmx20m -XX：MaxDirectMemorySize=10m
+ */
+public class DirectMemoryOOMTest {
+
+    public static void main(String[] args) {
+        int i=0;
+        try {
+            Field field = Unsafe.class.getDeclaredFields()[0];
+            field.setAccessible(true);
+            Unsafe unsafe = (Unsafe) field.get(null);
+            while(true){
+                unsafe.allocateMemory(1024*1024);
+                i++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            System.out.println("分配次数："+i);
+        }
+    }
+}
+```
+
