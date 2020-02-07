@@ -24,6 +24,7 @@
 * [面试-聊聊Java的GC机制](draft/聊聊Java的GC机制.md)
 * [面试-SQL慢查询的解决思路](draft/SQL慢查询的解决思路.md)
 * [面试-Hashmap底层实现原理](draft/Hashmap底层实现原理.md)
+* [面试-生产者消费者模型](draft/生产者消费者模型.md)
 * [面试题](draft/面试题.md)
 
 
