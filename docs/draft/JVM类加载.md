@@ -98,3 +98,5 @@
 - https://zhuanlan.zhihu.com/p/72204378
 - http://www.ityouknow.com/jvm/2017/08/19/class-loading-principle.html
 - https://segmentfault.com/a/1190000005608960
+- [https://javaguide.cn/2019/08/25/java/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B/](https://javaguide.cn/2019/08/25/java/jvm/类加载过程/)
+
