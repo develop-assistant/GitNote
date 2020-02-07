@@ -2,7 +2,8 @@
 
 ## JVM
 
-* [JVM垃圾回收](JVM垃圾回收)
-
 * [JVM类加载机制](note/JVM类加载机制)
+* [JVM垃圾回收](note/JVM垃圾回收)
+
+
 
