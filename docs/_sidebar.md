@@ -1,5 +1,5 @@
-- [草稿](draft.md)
-- [笔记](note.md)
+* [草稿](draft/)
+* [笔记](note.md)
 
 
 
