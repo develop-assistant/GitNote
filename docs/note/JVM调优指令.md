@@ -1,5 +1,24 @@
 # JVM调优指令
 
+
+
+## JVM常用配置参数
+
+```
+-Xms2g：初始化推大小为 2g；
+-Xmx2g：堆最大内存为 2g；
+-XX:NewRatio=4：设置年轻的和老年代的内存比例为 1:4；
+-XX:SurvivorRatio=8：设置新生代 Eden 和 Survivor 比例为 8:2；
+–XX:+UseParNewGC：指定使用 ParNew + Serial Old 垃圾回收器组合；
+-XX:+UseParallelOldGC：指定使用 ParNew + ParNew Old 垃圾回收器组合；
+-XX:+UseConcMarkSweepGC：指定使用 CMS + Serial Old 垃圾回收器组合；
+-XX:+PrintGC：开启打印 gc 信息；
+-XX:+PrintGCDetails：打印 gc 详细信息。
+-XX:+HeapDumpOnOutOfMemoryError：  虚拟机在出现内存溢出异常时dump出当前内存堆转储快照以便事后进行分析
+```
+
+
+
 ## jdk命令行工具
 
 ```text
@@ -543,7 +562,7 @@ jmap -histo:live 1701 | less
 
 
 
-## 4. jhat
+## jhat
 
 jhat(JVM Heap Analysis Tool)命令是与jmap搭配使用，用来分析jmap生成的dump，jhat内置了一个微型的HTTP/HTML服务器，生成dump的分析结果后，可以在浏览器中查看。在此要注意，一般不会直接在服务器上进行分析，因为jhat是一个耗时并且耗费硬件资源的过程，一般把服务器生成的dump文件复制到本地或其他机器上进行分析。
 
