@@ -223,7 +223,7 @@ GCT : 垃圾回收总消耗时间
 
 
 
-##### -gccapacity
+#### -gccapacity
 
 同-gc，不过还会输出Java堆各区域使用到的最大、最小空间
 
@@ -333,7 +333,7 @@ EC:当前eden空间 (KB)
 
 
 
-##### -gcoldcapacity
+#### -gcoldcapacity
 
 统计旧生代的大小和空间
 
