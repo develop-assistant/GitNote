@@ -962,6 +962,7 @@ java -XX:+PrintFlagsFinal -version
 -XX:InitiatingHeapOccupancyPercent=70
 
 // http://www.51gjie.com/java/551.html
+// https://www.cnblogs.com/gxyandwmm/p/9456955.html
 // For JDK 1.7⁄ 1.8 (8GB heap example for machine with 32 CPUs):
 -server // 服务器模式
 -Xms8g // JVM初始分配的堆内存，一般和Xmx配置成一样以避免每次gc后JVM重新分配内存
