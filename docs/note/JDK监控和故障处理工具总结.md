@@ -105,7 +105,7 @@ C:\Users\SnailClimb>jinfo  -flag PrintGC 17340
 -XX:-PrintGC
 ```
 
-使用 jinfo 可以在不重启虚拟机的情况下，可以动态的修改 jvm 的参数。尤其在线上的环境特别有用,请看下面的例子：
+**使用 jinfo 可以在不重启虚拟机的情况下，可以动态的修改 jvm 的参数**。尤其在线上的环境特别有用,请看下面的例子：
 
 `jinfo -flag [+|-]name vmid` 开启或者关闭对应名称的参数。
 
