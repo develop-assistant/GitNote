@@ -376,3 +376,482 @@ Type：编译类型
 Method：编译方法的类名和方法名。类名使用"/" 代替 "." 作为空间分隔符. 方法名是给出类的方法名. 格式是一致于HotSpot - XX:+PrintComplation 选项
 ```
 
+
+
+## 3. jmap
+
+`jmap`（Memory Map for Java）命令用于生成堆转储快照。 如果不使用 `jmap` 命令，要想获取 Java 堆转储，可以使用 `“-XX:+HeapDumpOnOutOfMemoryError”` 参数，可以让虚拟机在 OOM 异常出现之后自动生成 dump 文件，Linux 命令下可以通过 `kill -3` 发送进程退出信号也能拿到 dump 文件。
+
+`jmap` 的作用并不仅仅是为了获取 dump 文件，它还可以查询 finalizer 执行队列、Java 堆和永久代的详细信息，如空间使用率、当前使用的是哪种收集器等。和`jinfo`一样，`jmap`有不少功能在 Windows 平台下也是受限制的。
+
+示例：将指定应用程序的堆快照输出到桌面。后面，可以通过 jhat、Visual VM 等工具分析该堆文件。
+
+
+
+### 命令帮助
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jmap -help
+Usage:
+    jmap [option] <pid>
+        (to connect to running process)
+    jmap [option] <executable <core>
+        (to connect to a core file)
+    jmap [option] [server_id@]<remote server IP or hostname>
+        (to connect to remote debug server)
+
+where <option> is one of:
+    <none>               to print same info as Solaris pmap
+    -heap                to print java heap summary
+    -histo[:live]        to print histogram of java object heap; if the "live"
+                         suboption is specified, only count live objects
+    -clstats             to print class loader statistics
+    -finalizerinfo       to print information on objects awaiting finalization
+    -dump:<dump-options> to dump java heap in hprof binary format
+                         dump-options:
+                           live         dump only live objects; if not specified,
+                                        all objects in the heap are dumped.
+                           format=b     binary format
+                           file=<file>  dump heap to <file>
+                         Example: jmap -dump:live,format=b,file=heap.bin <pid>
+    -F                   force. Use with -dump:<dump-options> <pid> or -histo
+                         to force a heap dump or histogram when <pid> does not
+                         respond. The "live" suboption is not supported
+                         in this mode.
+    -h | -help           to print this help message
+    -J<flag>             to pass <flag> directly to the runtime system
+```
+
+### 参数详解
+
+| 选项           | 作用                                                         |
+| -------------- | ------------------------------------------------------------ |
+| -dump          | 生成java堆转储快照。格式为:-dump:[live, ]format=b, file=,其中live子参数说明是否只dump出存活的对象 |
+| -finalizerinfo | 显示在finalizer线程执行finalize方法的对象，只在linux平台下有效 |
+| -heap          | 显示java堆详细信息，如使用哪些回收器、参数配置、分代状况等。只在linux平台下有效 |
+| -histo         | 显示堆中对象统计信息，包括类、实例数量、合计容量             |
+| -permstat      | 以Classloader为统计口径显示永久代内存状态。只在linux平台下有效 |
+| -F             | 当虚拟机进程对-dump选项没有响应时，可使用这个选项强制生成dump快照，只在linux平台下有效 |
+
+### 示例详解
+
+#### -dump
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jmap -dump:format=b,file=dump.hprof 1701
+Dumping heap to /root/dump.hprof ...
+File exists
+```
+
+dump堆到文件,format指定输出格式，live指明是活着的对象,file指定文件名。dump.hprof这个后缀是为了后续可以直接用MAT(Memory Anlysis Tool)打开。
+
+#### -finalizerinfo
+
+打印等待回收对象的信息
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jmap -finalizerinfo 1701
+Attaching to process ID 1701, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.201-b09
+Number of objects pending for finalization: 0
+```
+
+可以看到当前F-QUEUE队列中并没有等待Finalizer线程执行finalizer方法的对象。
+
+#### -heap
+
+打印heap的概要信息，GC使用的算法，heap的配置及wise heap的使用情况,可以用此来判断内存目前的使用情况以及垃圾回收情况
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jmap -heap 1701
+Attaching to process ID 1701, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.201-b09
+
+using thread-local object allocation.
+Mark Sweep Compact GC 	//GC 方式  
+
+Heap Configuration:	//堆内存初始化配置
+   MinHeapFreeRatio         = 40	//对应jvm启动参数-XX:MinHeapFreeRatio设置JVM堆最小空闲比率
+   MaxHeapFreeRatio         = 70	//对应jvm启动参数 -XX:MaxHeapFreeRatio设置JVM堆最大空闲比率
+   MaxHeapSize              = 482344960 (460.0MB) //对应jvm启动参数-XX:MaxHeapSize=设置JVM堆的最大大小
+   NewSize                  = 10485760 (10.0MB)	//对应jvm启动参数-XX:NewSize=设置JVM堆的‘新生代’的默认大小
+   MaxNewSize               = 160759808 (153.3125MB)	//对应jvm启动参数-XX:MaxNewSize=设置JVM堆的‘新生代’的最大大小
+   OldSize                  = 20971520 (20.0MB)  //对应jvm启动参数-XX:OldSize=<value>:设置JVM堆的‘老生代’的大小
+   NewRatio                 = 2	//对应jvm启动参数-XX:OldSize=<value>:设置JVM堆的‘老生代’的大小
+   SurvivorRatio            = 8	//对应jvm启动参数-XX:SurvivorRatio=设置年轻代中Eden区与Survivor区的大小比值 
+   MetaspaceSize            = 21807104 (20.796875MB) //元空间初始大小
+   CompressedClassSpaceSize = 1073741824 (1024.0MB)
+   MaxMetaspaceSize         = 17592186044415 MB
+   G1HeapRegionSize         = 0 (0.0MB)
+
+Heap Usage:	//堆内存使用情况
+New Generation (Eden + 1 Survivor Space):
+   capacity = 54329344 (51.8125MB)
+   used     = 7109688 (6.780326843261719MB)
+   free     = 47219656 (45.03217315673828MB)
+   13.086276175173401% used
+Eden Space:  //Eden区内存分布
+   capacity = 48300032 (46.0625MB) //Eden区总容量
+   used     = 7109688 (6.780326843261719MB) //Eden区已使用
+   free     = 41190344 (39.28217315673828MB) //Eden区剩余容量
+   14.719841179401289% used
+From Space:
+   capacity = 6029312 (5.75MB)
+   used     = 0 (0.0MB)
+   free     = 6029312 (5.75MB)
+   0.0% used
+To Space:
+   capacity = 6029312 (5.75MB)
+   used     = 0 (0.0MB)
+   free     = 6029312 (5.75MB)
+   0.0% used
+tenured generation: //老年代内存分布
+   capacity = 120565760 (114.98046875MB)
+   used     = 49815952 (47.50819396972656MB)
+   free     = 70749808 (67.47227478027344MB)
+   41.318490423815184% used
+
+27371 interned Strings occupying 2942608 bytes.
+```
+
+
+
+#### -histo
+
+打印堆的对象统计，包括对象数、内存大小等等 （因为在dump:live前会进行full gc，如果带上live则只统计活对象，因此不加live的堆大小要大于加live堆的大小 ）
+
+```shell
+jmap -histo:live 1701 | less
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:          4358       18044728  [B
+   2:         97247        8984344  [C
+   3:         26579        2338952  java.lang.reflect.Method
+   4:         96737        2321688  java.lang.String
+   5:         58232        1863424  java.util.concurrent.ConcurrentHashMap$Node
+   6:         22337        1824304  [Ljava.lang.Object;
+   7:         15080        1675792  java.lang.Class
+   8:         24027         961080  java.util.LinkedHashMap$Entry
+   9:          6227         917008  [I
+  10:         10500         797288  [Ljava.util.HashMap$Node;
+  ...
+```
+
+
+
+## jhat
+
+jhat(JVM Heap Analysis Tool)命令是与jmap搭配使用，用来分析jmap生成的dump，jhat内置了一个微型的HTTP/HTML服务器，生成dump的分析结果后，可以在浏览器中查看。在此要注意，一般不会直接在服务器上进行分析，因为jhat是一个耗时并且耗费硬件资源的过程，一般把服务器生成的dump文件复制到本地或其他机器上进行分析。
+
+```shell
+jhat [dumpfile]
+```
+
+**分析同样一个dump快照，MAT需要的额外内存比jhat要小的多的多，所以建议使用MAT来进行分析，当然也看个人偏好。**
+
+具体排查时需要结合代码，观察是否大量应该被回收的对象在一直被引用或者是否有占用内存特别大的对象无法被回收。
+**一般情况，会down到客户端用工具来分析**
+
+
+
+## 5. jstack
+
+`jstack`（Stack Trace for Java）命令用于生成虚拟机当前时刻的线程快照。线程快照就是当前虚拟机内每一条线程正在执行的方法堆栈的集合.
+
+生成线程快照的目的主要是定位线程长时间出现停顿的原因，如线程间死锁、死循环、请求外部资源导致的长时间等待等都是导致线程长时间停顿的原因。线程出现停顿的时候通过`jstack`来查看各个线程的调用堆栈，就可以知道没有响应的线程到底在后台做些什么事情，或者在等待些什么资源。
+
+### 命令帮助
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jstack -help
+Usage:
+    jstack [-l] <pid>
+        (to connect to running process)
+    jstack -F [-m] [-l] <pid>
+        (to connect to a hung process)
+    jstack [-m] [-l] <executable> <core>
+        (to connect to a core file)
+    jstack [-m] [-l] [server_id@]<remote server IP or hostname>
+        (to connect to a remote debug server)
+
+Options:
+    -F  to force a thread dump. Use when jstack <pid> does not respond (process is hung)
+    -m  to print both java and native frames (mixed mode)
+    -l  long listing. Prints additional information about locks
+    -h or -help to print this help message
+```
+
+
+
+### 参数详解
+
+```
+-F : 当正常输出请求不被响应时，强制输出线程堆栈
+-l : 除堆栈外，显示关于锁的附加信息
+-m : 如果调用到本地方法的话，可以显示C/C++的堆栈
+```
+
+
+
+### 示例详情
+
+**下面是一个线程死锁的代码。我们下面会通过 `jstack` 命令进行死锁检查，输出死锁信息，找到发生死锁的线程。**
+
+```java
+package com.javaedge.concurrency.example.deadLock;
+
+
+public class DeadLockDemo {
+    private static Object resource1 = new Object();//资源 1
+    private static Object resource2 = new Object();//资源 2
+
+    public static void main(String[] args) {
+        new Thread(() -> {
+            synchronized (resource1) {
+                System.out.println(Thread.currentThread() + "get resource1");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread() + "waiting get resource2");
+                synchronized (resource2) {
+                    System.out.println(Thread.currentThread() + "get resource2");
+                }
+            }
+        }, "线程 1").start();
+
+        new Thread(() -> {
+            synchronized (resource2) {
+                System.out.println(Thread.currentThread() + "get resource2");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread() + "waiting get resource1");
+                synchronized (resource1) {
+                    System.out.println(Thread.currentThread() + "get resource1");
+                }
+            }
+        }, "线程 2").start();
+    }
+}
+```
+
+
+
+线程 A 通过 synchronized (resource1) 获得 resource1 的监视器锁，然后通过`Thread.sleep(1000);`让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。
+
+
+
+**通过 `jstack` 命令分析：**
+
+```log
+➜  Java-Concurrency-Progamming-Tutorial git:(master) ✗ jstack 26752
+2020-02-08 15:07:20
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.211-b12 mixed mode):
+
+"Attach Listener" #16 daemon prio=9 os_prio=31 tid=0x00007ff49814c800 nid=0x3207 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"DestroyJavaVM" #15 prio=5 os_prio=31 tid=0x00007ff495857800 nid=0xd03 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"线程 2" #14 prio=5 os_prio=31 tid=0x00007ff498836800 nid=0x5903 waiting for monitor entry [0x0000700005b7e000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+        at com.javaedge.concurrency.example.deadLock.DeadLockDemo.lambda$main$1(DeadLockDemo.java:34)
+        - waiting to lock <0x000000076af91968> (a java.lang.Object)
+        - locked <0x000000076af91978> (a java.lang.Object)
+        at com.javaedge.concurrency.example.deadLock.DeadLockDemo$$Lambda$2/194494468.run(Unknown Source)
+        at java.lang.Thread.run(Thread.java:748)
+
+"线程 1" #13 prio=5 os_prio=31 tid=0x00007ff499876000 nid=0xa703 waiting for monitor entry [0x0000700005a7b000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+        at com.javaedge.concurrency.example.deadLock.DeadLockDemo.lambda$main$0(DeadLockDemo.java:19)
+        - waiting to lock <0x000000076af91978> (a java.lang.Object)
+        - locked <0x000000076af91968> (a java.lang.Object)
+        at com.javaedge.concurrency.example.deadLock.DeadLockDemo$$Lambda$1/972765878.run(Unknown Source)
+        at java.lang.Thread.run(Thread.java:748)
+
+"Service Thread" #12 daemon prio=9 os_prio=31 tid=0x00007ff495820800 nid=0xa903 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C1 CompilerThread3" #11 daemon prio=9 os_prio=31 tid=0x00007ff49612f800 nid=0x5503 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread2" #10 daemon prio=9 os_prio=31 tid=0x00007ff497014000 nid=0x3f03 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread1" #9 daemon prio=9 os_prio=31 tid=0x00007ff497013800 nid=0x3d03 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread0" #8 daemon prio=9 os_prio=31 tid=0x00007ff499880800 nid=0x3c03 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"JDWP Command Reader" #7 daemon prio=10 os_prio=31 tid=0x00007ff497009000 nid=0x3a03 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"JDWP Event Helper Thread" #6 daemon prio=10 os_prio=31 tid=0x00007ff497004800 nid=0x4203 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"JDWP Transport Listener: dt_socket" #5 daemon prio=10 os_prio=31 tid=0x00007ff497003800 nid=0x4407 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Signal Dispatcher" #4 daemon prio=9 os_prio=31 tid=0x00007ff49902d800 nid=0x3803 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Finalizer" #3 daemon prio=8 os_prio=31 tid=0x00007ff497005800 nid=0x4b03 in Object.wait() [0x0000700004e54000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x000000076ab08ed0> (a java.lang.ref.ReferenceQueue$Lock)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:144)
+        - locked <0x000000076ab08ed0> (a java.lang.ref.ReferenceQueue$Lock)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:165)
+        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:216)
+
+"Reference Handler" #2 daemon prio=10 os_prio=31 tid=0x00007ff496835000 nid=0x4d03 in Object.wait() [0x0000700004d51000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x000000076ab06bf8> (a java.lang.ref.Reference$Lock)
+        at java.lang.Object.wait(Object.java:502)
+        at java.lang.ref.Reference.tryHandlePending(Reference.java:191)
+        - locked <0x000000076ab06bf8> (a java.lang.ref.Reference$Lock)
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:153)
+
+"VM Thread" os_prio=31 tid=0x00007ff49682e800 nid=0x2e03 runnable 
+
+"GC task thread#0 (ParallelGC)" os_prio=31 tid=0x00007ff498803800 nid=0x2207 runnable 
+
+"GC task thread#1 (ParallelGC)" os_prio=31 tid=0x00007ff498804000 nid=0x2103 runnable 
+
+"GC task thread#2 (ParallelGC)" os_prio=31 tid=0x00007ff498804800 nid=0x1e03 runnable 
+
+"GC task thread#3 (ParallelGC)" os_prio=31 tid=0x00007ff498805000 nid=0x2a03 runnable 
+
+"GC task thread#4 (ParallelGC)" os_prio=31 tid=0x00007ff498806000 nid=0x5403 runnable 
+
+"GC task thread#5 (ParallelGC)" os_prio=31 tid=0x00007ff496802000 nid=0x5303 runnable 
+
+"GC task thread#6 (ParallelGC)" os_prio=31 tid=0x00007ff496802800 nid=0x5103 runnable 
+
+"GC task thread#7 (ParallelGC)" os_prio=31 tid=0x00007ff495800800 nid=0x4f03 runnable 
+
+"VM Periodic Task Thread" os_prio=31 tid=0x00007ff498824800 nid=0x5703 waiting on condition 
+
+JNI global references: 2505
+
+
+Found one Java-level deadlock:
+=============================
+"线程 2":
+  waiting to lock monitor 0x00007ff4998056a8 (object 0x000000076af91968, a java.lang.Object),
+  which is held by "线程 1"
+"线程 1":
+  waiting to lock monitor 0x00007ff499801608 (object 0x000000076af91978, a java.lang.Object),
+  which is held by "线程 2"
+
+Java stack information for the threads listed above:
+===================================================
+"线程 2":
+        at com.javaedge.concurrency.example.deadLock.DeadLockDemo.lambda$main$1(DeadLockDemo.java:34)
+        - waiting to lock <0x000000076af91968> (a java.lang.Object)
+        - locked <0x000000076af91978> (a java.lang.Object)
+        at com.javaedge.concurrency.example.deadLock.DeadLockDemo$$Lambda$2/194494468.run(Unknown Source)
+        at java.lang.Thread.run(Thread.java:748)
+"线程 1":
+        at com.javaedge.concurrency.example.deadLock.DeadLockDemo.lambda$main$0(DeadLockDemo.java:19)
+        - waiting to lock <0x000000076af91978> (a java.lang.Object)
+        - locked <0x000000076af91968> (a java.lang.Object)
+        at com.javaedge.concurrency.example.deadLock.DeadLockDemo$$Lambda$1/972765878.run(Unknown Source)
+        at java.lang.Thread.run(Thread.java:748)
+
+Found 1 deadlock.
+
+```
+
+可以看到 `jstack` 命令已经帮我们找到发生死锁的线程的具体信息。
+
+
+
+## 6. jinfo
+
+jinfo(JVM Configuration info)这个命令作用是实时查看和调整虚拟机运行参数。 之前的jps -v口令只能查看到显示指定的参数，如果想要查看未被显示指定的参数的值就要使用jinfo口令
+
+### 命令帮助
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jinfo -help
+Usage:
+    jinfo [option] <pid>
+        (to connect to running process)
+    jinfo [option] <executable <core>
+        (to connect to a core file)
+    jinfo [option] [server_id@]<remote server IP or hostname>
+        (to connect to remote debug server)
+
+where <option> is one of:
+    -flag <name>         to print the value of the named VM flag
+    -flag [+|-]<name>    to enable or disable the named VM flag
+    -flag <name>=<value> to set the named VM flag to the given value
+    -flags               to print VM flags
+    -sysprops            to print Java system properties
+    <no option>          to print both of the above
+    -h | -help           to print this help message
+```
+
+### 参数详解
+
+```
+-flag : 输出指定args参数的值
+-flags : 不需要args参数，输出所有JVM参数的值
+-sysprops : 输出系统属性，等同于System.getProperties()
+```
+
+
+
+### 示例详情
+
+#### -flags
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jinfo -flags 1701
+Attaching to process ID 1701, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.201-b09
+Non-default VM flags: -XX:CICompilerCount=2 -XX:InitialHeapSize=31457280 -XX:MaxHeapSize=482344960 -XX:MaxNewSize=160759808 -XX:MinHeapDeltaBytes=196608 -XX:NewSize=10485760 -XX:OldSize=20971520 -XX:+UseCompressedClassPointers -XX:+UseCompressedOops
+Command line:
+```
+
+
+
+#### -flag
+
+`jinfo -flag name vmid` :输出对应名称的参数的具体值。比如输出 MaxHeapSize、查看当前 jvm 进程是否开启打印 GC 日志 ( `-XX:PrintGCDetails` :详细 GC 日志模式，这两个都是默认关闭的)。
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jinfo -flag MaxHeapSize 1701
+-XX:MaxHeapSize=482344960
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jinfo -flag PrintGC 1701
+-XX:-PrintGC
+```
+
+
+
+使用 jinfo 可以在不重启虚拟机的情况下，可以动态的修改 jvm 的参数。尤其在线上的环境特别有用。**
+
+**`jinfo -flag [+|-]name vmid` 开启或者关闭对应名称的参数。**
+
+```shell
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jinfo -flag PrintGC 1701
+-XX:-PrintGC
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jinfo -flag +PrintGC 1701
+[root@iz2ze2e5wmatyx36v5jw5lz ~]# jinfo -flag PrintGC 1701
+-XX:+PrintGC
+```
+
