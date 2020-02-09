@@ -394,33 +394,31 @@ G1 收集器的运作大致分为以下几个步骤：
 
 ## 5. 几种常见的垃圾收集器组合
 
+
+
+### 5.1. 常见垃圾收集器组合
+
 ![常见垃圾收集器组合](../assets/常见垃圾收集器组合.png)
 
 
 
-以下内容来自[oracle-jvm优化](https://www.oracle.com/technetwork/cn/community/developer-day/2-jvm-tuning-1866448-zhs.pdf)。
+以下内容来自[oracle官方](https://www.oracle.com/technetwork/cn/community/developer-day/2-jvm-tuning-1866448-zhs.pdf)。
 
 
 
-**有效的虚拟机组合**
+### 5.2. 有效的虚拟机组合
 
 ![有效的虚拟机组合](../assets/有效的虚拟机组合.png)
 
 
 
-**推荐组合**
+### 5.3. 官方推荐组合
 
 ![gc推荐](../assets/gc推荐.png)
 
-**JDK6推荐**
+### 5.4. JDK6官方推荐
 
 ![jdk6推荐jvm垃圾回收器组合](../assets/jdk6推荐jvm垃圾回收器组合.png)
-
-**Hotspot虚拟机优化表**
-
-![Hotspot配置优化表](../assets/Hotspot配置优化表.png)
-
-
 
 ## 参考
 
