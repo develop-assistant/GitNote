@@ -74,6 +74,8 @@
  profiler     Async Profiler. https://github.com/jvm-profiling-tools/async-profiler
 ```
 
+![arthas指令表](../assets/arthas指令表.png)
+
 
 
 ### 1、dashboard
