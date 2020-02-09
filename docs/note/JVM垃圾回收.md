@@ -426,3 +426,5 @@ G1 收集器的运作大致分为以下几个步骤：
 - https://my.oschina.net/hosee/blog/644618
 - https://docs.oracle.com/javase/specs/jvms/se8/html/index.html
 - https://crowhawk.github.io/2017/08/15/jvm_3/
+- https://www.cnblogs.com/alsf/p/9484770.html
+
