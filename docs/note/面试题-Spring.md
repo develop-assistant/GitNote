@@ -115,5 +115,5 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 }
 ```
 
-
+参考[bean循环依赖](http://www.justdojava.com/2019/06/22/spring-analysis-note-5/)
 
