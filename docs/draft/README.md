@@ -5,6 +5,7 @@
 * [面试-并发编程](draft/面试-并发编程.md)
 * [面试-反射](draft/反射.md)
 * [面试-JVM](draft/深入理解java虚拟机.md)
+* [面试-Redis](draft/面试之Redis.md)
 * [面试-Kafka](draft/Kafka.md)
 * [面试-NIO](draft/NIO的理解.md)
 * [面试-Java内存模型](draft/Java内存模型.md)
