@@ -14,7 +14,7 @@ Spring框架里的Bean，默认为单例模式。
 
 
 
-# 2. Spring-bean的循环依赖
+## 2. Spring-bean的循环依赖
 
 ### 何为循环依赖
 
@@ -115,5 +115,11 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 }
 ```
 
-参考[bean循环依赖](http://www.justdojava.com/2019/06/22/spring-analysis-note-5/)
+参考 [bean循环依赖](http://www.justdojava.com/2019/06/22/spring-analysis-note-5/)
+
+
+
+## 3. Spring-aop失效问题
+
+
 
