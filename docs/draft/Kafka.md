@@ -86,6 +86,10 @@ Kafka还支持对消息集合进行压缩，Producer可以通过GZIP或Snappy格
 
 # kafka如何保证消息不被重复消费
 
+# kafka顺序消费
+
+![kafka-order-02](../assets/kafka-order-02.png)
+
 # Kafla实战
 
 ```shell
