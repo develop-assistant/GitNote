@@ -566,3 +566,9 @@ public class KafkaProducerController {
 - 比如基于数据库的唯一键来保证重复数据不会重复插入多条。因为有唯一键约束了，重复数据插入只会报错，不会导致数据库中出现脏数据。
 
 ![kafka幂等](../assets/kafka幂等.png)
+
+
+
+## 参考
+
+- http://www.mydlq.club/article/34/
