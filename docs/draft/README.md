@@ -46,6 +46,9 @@
 * [Redis-数据类型](draft/Redis-数据类型.md)
 * [Redis-高可用](draft/Redis高可用.md)
 * [Redis使用lua脚本](draft/Redis使用lua脚本.md)
+* [基于Redis实现分布式限流组件](draft/基于Redis实现分布式限流组件.md)
+
+
 
 ### 设计模式
 
@@ -64,6 +67,11 @@
 * [快速排序](draft/快速排序.md)
 * [归并排序](draft/归并排序.md)
 * [位图法](draft/位图法.md)
+* [算法-寻找数组中第k大的值](draft/算法-寻找数组中第k大的值.md)
+* [限流算法](draft/限流算法.md)
+* [一致性hash算法实现](draft/一致性hash算法实现.md)
+
+
 
 ### 源码
 
@@ -88,6 +96,14 @@
 ### JVM
 
 - [JVM调优](draft/JVM调优)
+
+
+
+## 其他
+
+- [秒杀方案](draft/秒杀方案.md)
+- [手写Hashmap](draft/手写Hashmap.md)
+- [Kafka消息重复及丢失](draft/Kafka消息重复及丢失.md)
 
 
 
