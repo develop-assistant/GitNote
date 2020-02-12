@@ -328,3 +328,17 @@ afterHandler
 所以，只有经过 DispatcherServlet 的请求才会被拦截器捕获，而我们自定义的 Servlet 请求则不会被拦截的。
 
 
+
+## 3. 过滤器与拦截器两者对比总结
+
+1. 过滤器是基于函数的回调，而拦截器是基于 Java 反射机制的
+2. 过滤器Filter依赖于Servlet容器。拦截器Interceptor依赖于框架容器，可以调用 IOC 容器中的各种依赖
+3. 拦截器可以 `preHandle`方法内返回 false 进行中断。过滤器就比较复杂，需要处理请求和响应对象来引发中断，需要额外的动作，比如将用户重定向到错误页面
+4. 过滤器只能在请求的前后使用，而拦截器可以详细到每个方法
+
+
+
+tomcat容器中执行顺序: Filter -> Servlet -> Interceptor -> Controller
+
+![tomcat执行顺序](../assets/tomcat执行顺序.png)
+
