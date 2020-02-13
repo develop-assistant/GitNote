@@ -50,6 +50,8 @@
 - [Spring过滤器与拦截器的区别](note/Spring过滤器与拦截器的区别.md)
 - [Spring之AOP简单用法](note/Spring之AOP简单用法.md)
 - [Spring之Hystrix](note/Spring之Hystrix.md)
+- [Spring集成kafka](draft/Springboot集成kafka)
+- [Spring集成Cache](draft/Springboot集成Cache)
 
 
 
