@@ -2,6 +2,10 @@
 
 
 
+![hystrix流程图](../assets/hystrix流程图.png)
+
+
+
 ## 1. 触发fallback条件(降级)
 
 Hystrix会在以下四种情况下触发fallback函数：
@@ -120,7 +124,21 @@ public class OrderService1 {
     void timeoutDowngrade() throws InterruptedException {
 
         // 测试Hystrix超时降级策略
-        orderService1.createOrder("orderService1");
+        CountDownLatch countDownLatch1 = new CountDownLatch(10);
+        ExecutorService exec1 = Executors.newCachedThreadPool();
+
+        for (int i=0; i<10; i++) {
+            exec1.execute(() -> {
+                try {
+                    orderService1.createOrder("orderService1");
+                } finally {
+                    countDownLatch1.countDown();
+                }
+            });
+        }
+        countDownLatch1.await();
+        exec1.shutdown();
+
     }
 ```
 
@@ -128,6 +146,16 @@ public class OrderService1 {
 
 ```log
 2020-02-13 23:48:09.440  INFO 48096 --- [ HystrixTimer-1] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.165  INFO 48542 --- [ HystrixTimer-4] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.165  INFO 48542 --- [ HystrixTimer-5] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.165  INFO 48542 --- [ HystrixTimer-3] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.165  INFO 48542 --- [ HystrixTimer-1] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.165  INFO 48542 --- [ HystrixTimer-6] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.165  INFO 48542 --- [ HystrixTimer-2] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.165  INFO 48542 --- [ HystrixTimer-8] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.165  INFO 48542 --- [ HystrixTimer-7] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.172  INFO 48542 --- [ HystrixTimer-4] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
+2020-02-14 00:39:08.172  INFO 48542 --- [ HystrixTimer-6] com.idcmind.ants.hystrix.OrderService1   : --------超时降级策略执行--------
 
 ```
 
@@ -235,7 +263,7 @@ public class OrderService2 {
 
 
 
-**线程池限流**
+**线程池限流(默认策略)**
 
 ```java
 @Slf4j
