@@ -35,7 +35,7 @@ producer发出一条消息，broke落盘以后因为网络等种种原因发送�
 
 异常是RetriableException类型或者TransactionManager允许重试；RetriableException类继承关系如下：
 
-![img](https://img2018.cnblogs.com/blog/843808/201812/843808-20181215212646691-367856650.png)
+![kafka异常继承](../assets/kafka异常继承.png)
 
 #### 4、记录顺序问题
 
