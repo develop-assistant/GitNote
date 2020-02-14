@@ -131,6 +131,7 @@
 * [Docker之Nginx](note/Docker之Nginx.md)
 * [Docker之openresty](note/Docker之openresty.md)
 * [Docker之Mysql主从](note/Docker之Mysql主从.md)
+* [Docker之consul集群](note/Docker之consul集群.md)
 
 
 ## 其他
@@ -143,6 +144,7 @@
 - [面试-Kafka](draft/Kafka.md)
 - [面试-生产者消费者模型](draft/生产者消费者模型.md)
 - [Kafka消息重复及丢失](draft/Kafka消息重复及丢失.md)
+- [Mysql调优](draft/Mysql调优.md)
 
 
 
