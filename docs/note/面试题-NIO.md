@@ -1,8 +1,46 @@
 # 面试题-NIO
 
+## BIO 同步阻塞IO模型
+
+我们先来回顾下经典BIO编程模型
+
+```java
+{
+     ExecutorService executor = Excutors.newFixedThreadPollExecutor(100);//线程池
+
+     ServerSocket serverSocket = new ServerSocket();
+     serverSocket.bind(8088);
+     while(!Thread.currentThread.isInturrupted()){//主线程死循环等待新连接到来
+     Socket socket = serverSocket.accept();
+     executor.submit(new ConnectIOnHandler(socket));//为新的连接创建新的线程
+}
+
+class ConnectIOnHandler extends Thread{
+    private Socket socket;
+    public ConnectIOnHandler(Socket socket){
+       this.socket = socket;
+    }
+    public void run(){
+      while(!Thread.currentThread.isInturrupted()&&!socket.isClosed()){死循环处理读写事件
+          String someThing = socket.read()....//读取数据
+          if(someThing!=null){
+             ......//处理数据
+             socket.write()....//写数据
+          }
+
+      }
+    }
+}
+```
+
+这是一个经典的每连接每线程的模型，之所以使用多线程，主要原因在于socket.accept()、socket.read()、socket.write()三个主要函数都是同步阻塞的，当一个连接在处理I/O的时候，系统是阻塞的，如果是单线程的话必然就挂死在那里；但CPU是被释放出来的，开启多线程，就可以让CPU去处理更多的事情。其实这也是所有使用多线程的本质： 1. 利用多核。 2. 当I/O阻塞系统，但CPU空闲的时候，可以利用多线程使用CPU资源。
+
+现在的多线程一般都使用线程池，可以让线程的创建和回收成本相对较低。在活动连接数不是特别高（小于单机1000）的情况下，这种模型是比较不错的，可以让每一个连接专注于自己的I/O并且编程模型简单，也不用过多考虑系统的过载、限流等问题。线程池本身就是一个天然的漏斗，可以缓冲一些系统处理不了的连接或请求。
 
 
-## **NIO编程实现步骤**
+
+
+## NIO编程实现步骤
 
 ![NIO-selector](../assets/NIO-selector.png)
 

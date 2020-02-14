@@ -150,6 +150,164 @@ Login是接口的入口函数
 
 
 
+## 5. 模拟堆栈溢出
+
+###  堆溢出模拟
+```java
+/**
+ * 堆溢出: java对象在堆中分配内存
+ *
+ * VM options: -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError
+ *
+ * 执行结果:
+ *
+ * 分配次数：1
+ * 分配次数：2
+ * 分配次数：3
+ * java.lang.OutOfMemoryError: Java heap space
+ * Dumping heap to java_pid17426.hprof ...
+ * Heap dump file created [17431809 bytes in 0.026 secs]
+ * Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+ *     at com.example.demojava.demo.HeapOOm.main(HeapOOm.java:15)
+ */
+public class HeapOOm {
+
+    public static void main(String[] args) {
+        List<byte[]> list = new ArrayList<>();
+        int i=0;
+        while(true){
+            list.add(new byte[5*1024*1024]);
+            System.out.println("分配次数："+(++i));
+        }
+    }
+}
+```
+
+> *附：dump文件会在项目的根目录下生成*
+>
+> 从上面的例子我们可以看出，在进行第4次内存分配时，发生了内存溢出。
+
+
+
+### 栈溢出模拟
+
+栈空间不足时，需要分下面两种情况处理：
+
+- 线程请求的栈深度大于虚拟机所允许的最大深度，将抛出StackOverflowError
+- 虚拟机在扩展栈深度时无法申请到足够的内存空间，将抛出OutOfMemberError
+
+附：当前大部分的虚拟机栈都是可动态扩展的。
+
+1、栈空间不足——StackOverflowError实例
+
+```java
+/**
+ * 栈空间不足溢出
+ *
+ * 执行结果：
+ *
+ * 递归次数：18117
+ * Exception in thread "main" java.lang.StackOverflowError
+ *     at com.example.demojava.demo.StackOverflowErrorDemo.sofMethod(StackOverflowErrorDemo.java:13)
+ */
+public class StackOverflowErrorDemo {
+
+    int depth = 0;
+
+    public void sofMethod(){
+        depth ++ ;
+        sofMethod();
+    }
+
+    public static void main(String[] args) {
+        StackOverflowErrorDemo test = null;
+        try {
+            test = new StackOverflowErrorDemo();
+            test.sofMethod();
+        } finally {
+            System.out.println("递归次数："+test.depth);
+        }
+    }
+}
+```
+
+我们可以看到，sofMethod()方法递归调用了982次后，出现了StackOverflowError。
+
+
+
+### 永久代溢出模拟
+
+永久代溢出可以分为两种情况，第一种是常量池溢出，第二种是方法区溢出。
+
+**1、永久代溢出——常量池溢出**
+
+**2、永久代溢出——方法区溢出**
+
+```java
+/**
+ * java7 方法区溢出
+ * -XX:PermSize=10m -XX:MaxPermSize=10m
+ */
+public class MethodAreaOOMTest {
+
+    public static void main(String[] args) {
+        int i=0;
+        try {
+            while(true){
+                Enhancer enhancer = new Enhancer();
+                enhancer.setSuperclass(OOMObject.class);
+                enhancer.setUseCache(false);
+                enhancer.setCallback(new MethodInterceptor() {
+                    @Override
+                    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+                        return proxy.invokeSuper(obj, args);
+                    }
+                });
+                enhancer.create();
+                i++;
+            }
+        } finally{
+            System.out.println("运行次数："+i);
+        }
+    }
+
+    static class OOMObject{
+
+    }
+}
+```
+
+从上面的例子我们可以看出，在进行第4次内存分配时，发生了内存溢出。
+
+### 元空间溢出模拟
+
+```java
+/**
+ * -Xms20m -Xmx20m -XX：MaxDirectMemorySize=10m
+ */
+public class DirectMemoryOOMTest {
+
+    public static void main(String[] args) {
+        int i=0;
+        try {
+            Field field = Unsafe.class.getDeclaredFields()[0];
+            field.setAccessible(true);
+            Unsafe unsafe = (Unsafe) field.get(null);
+            while(true){
+                unsafe.allocateMemory(1024*1024);
+                i++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            System.out.println("分配次数："+i);
+        }
+    }
+}
+```
+
+
+
 ## 参考
 
 - https://juejin.im/post/5dd0c0b95188253d73575ca1
