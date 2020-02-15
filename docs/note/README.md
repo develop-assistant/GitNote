@@ -4,6 +4,7 @@
 - [反射](note/Java反射.md)
 - [手写Hashmap](note/手写Hashmap.md)
 - [Hashmap底层实现原理](note/Hashmap底层实现原理.md)
+- [Java8新特性](note/Java8新特性.md)
 
 
 # 多线程

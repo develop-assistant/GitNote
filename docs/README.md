@@ -36,6 +36,7 @@
 - [反射](note/Java反射.md)
 - [手写Hashmap](note/手写Hashmap.md)
 - [Hashmap底层实现原理](note/Hashmap底层实现原理.md)
+- [Java8新特性](note/Java8新特性.md)
 
 
 ## 多线程
@@ -161,9 +162,13 @@
 - [Kafka消息重复及丢失](draft/Kafka消息重复及丢失.md)
 - [Mysql调优](draft/Mysql调优.md)
 
+## 快捷键
 
+- [快捷键-Idea](note/快捷键-Idea.md)
 
 ---
 
 * [草稿](draft/)
+
+
 
