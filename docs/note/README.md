@@ -24,8 +24,6 @@
 * [JVM调优指令](note/JVM调优指令.md)
 * [JVM线上调优](note/JVM线上调优.md)
 
-
-
 # 面试题
 
 - [面试题-Java基础](note/面试题-Java基础.md)
@@ -35,7 +33,6 @@
 - [面试题-NIO](note/面试题-NIO.md)
 - [面试题-并发编程](note/面试-并发编程.md)
 
-  
 # 设计模式
 
 - [单例模式](note/设计模式-单例模式.md)
@@ -59,8 +56,6 @@
 - [Spring之IOC源码解析](note/Spring之IOC源码解析.md)
 - [Mybatis源码解析](note/Mybatis源码解析.md)
 - [Euraka实现原理](note/Euraka实现原理.md)
-
-
 
 # MySQL
 
@@ -126,6 +121,12 @@
 - [面试-Kafka](draft/Kafka.md)
 - [面试-生产者消费者模型](draft/生产者消费者模型.md)
 - [Kafka消息重复及丢失](draft/Kafka消息重复及丢失.md)
+
+# 快捷键
+
+- [快捷键-Idea](note/快捷键-Idea.md)
+
+
 
 
 
