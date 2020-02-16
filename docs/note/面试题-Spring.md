@@ -121,5 +121,101 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 
 ## 3. Spring-aop失效问题
 
+在spring 中使用 @Transactional 、 @Cacheable 或 自定义 AOP 注解时，会发现个问题：
 
+```
+在对象内部的方法中调用该对象的其他使用aop机制的方法，被调用方法的aop注解失效。
+```
+
+事务失效
+
+```java
+public class TicketService{
+    //买火车票
+    @Transactional
+    public void buyTrainTicket(Ticket ticket){
+        System.out.println("买到了火车票");
+        try {
+    //在同一个类中的方法，调用 aop注解（@Transactional 注解也是aop 注解） 的方法，会使aop 注解失效.
+        //此时如果 sendMessage()的发送消息动作失败抛出异常，“消息存入数据库“动作不会回滚。
+            sendMessage();
+        } catch (Exception  e) {
+            logger.warn("发送消息异常");
+        }
+    }
+
+    //买到车票后发送消息
+    @Transactional
+    public void sendMessage(){
+        System.out.println("消息存入数据库");
+        System.out.println("执行发送消息动作");
+    }
+}
+```
+
+
+
+当我门调用buyTrainTicket(Ticket ticket)方法时，spring 的动态代理已经帮我们动态生成了一个代理的对象，暂且我就叫他 $TicketService1。
+
+所以调用buyTrainTicket(Ticket ticket) 方法实际上是代理对象$TicketService1调用的。$TicketService1.buyTrainTicket(Ticket ticket)
+
+但是在buyTrainTicket 方法内调用同一个类的另外一个注解方法sendMessage()时，实际上是this.sendMessage() 这个this 指的是TicketService 对象，并不是$TicketService1 代理对象，没有走代理。所以 注解失效。
+
+**解决方法**
+
+```
+//通过AopContext.currentProxy()获取当前代理对象。
+AopContext.currentProxy();
+```
+
+上边案例修改
+
+```java
+public class TicketService{
+    //买火车票
+    @Transactional
+    public void buyTrainTicket(Ticket ticket){
+        System.out.println("买到了火车票");
+        try {
+
+//通过代理对象去调用sendMessage()方法          
+(TicketService)AopContext.currentProxy().sendMessage();
+        } catch (Exception  e) {
+            logger.warn("发送消息异常");
+        }
+    }
+
+    @Transactional
+    public void sendMessage(){
+        System.out.println("消息存入数据库");
+        System.out.println("执行发送消息动作");
+    }
+}
+```
+
+
+
+springboot通过实现ApplicationContext获取代理对象
+
+```java
+public class UserService{ //买火车票 
+    @Transactional 
+    public void hello(){
+        System.out.println("开始hello"); 
+        try {
+             //通过代理对象去调用saveUser()方法
+            SpringUtil.getBean(this.getClass()).saveUser()
+        } catch(Exception e) {
+            logger.error("发送消息异常");
+        }
+    }
+ 
+    @Transactional
+    public void saveUser(){
+        User user = new User();
+        user.setName("zhangsan");
+        System.out.println("将用户存入数据库");
+    }
+}
+```
 
