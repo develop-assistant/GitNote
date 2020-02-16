@@ -269,3 +269,6 @@ public class UserService{ //买火车票
 - **TransactionDefinition.PROPAGATION_NESTED：** 如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于TransactionDefinition.PROPAGATION_REQUIRED。
 
 
+
+参考: [举例讲解spring事务传播行为](https://zhuanlan.zhihu.com/p/88921438)
+
