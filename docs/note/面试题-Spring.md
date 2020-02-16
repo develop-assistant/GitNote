@@ -242,3 +242,8 @@ public class UserService{ //买火车票
 
 
 
+## 5. springMVC原理
+
+
+
+![springMVC原理](../assets/springMVC原理.jpg)
