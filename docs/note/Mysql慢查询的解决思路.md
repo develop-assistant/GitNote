@@ -60,6 +60,12 @@ SQL调优
 
 
 
+**show processlist**
+
+http://www.heartthinkdo.com/?p=434
+
+
+
 **一点总结**
 
 
