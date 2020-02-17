@@ -243,3 +243,45 @@ log:test后置增强
 ```
 
 可以看到问题已经解决了。
+
+
+
+## 6. 验证结果
+
+以上我们猜想并解决了问题，下边来验证下对象的调用
+
+```java
+@Service
+public class LoginService {
+
+    public void login(String userName) {
+        LoginService loginService = SpringContextUtil.getBean(this.getClass());
+
+        System.out.println("当前对象为" + this.getClass().getName());
+        System.out.println("代理对象为" + loginService.getClass().getName());
+
+        if (loginService.isAdmin(userName)) {
+            System.out.println(userName + "正常登录");
+            return;
+        }
+        System.out.println(userName + "非法登录");
+    }
+
+    protected boolean isAdmin(String userName) {
+        return "admin".equalsIgnoreCase(userName);
+    }
+}
+```
+
+结果输出
+
+```
+log:test前置增强
+当前对象为com.example.demojava.aop2.LoginService
+代理对象为com.example.demojava.aop2.LoginService$$EnhancerBySpringCGLIB$$97517af5
+非法用户test增强逻辑
+test非法登录
+log:test后置增强
+```
+
+由日志可以看出失效调用时的this为target对象，而后边的调用为cglib生成的代理对象。
