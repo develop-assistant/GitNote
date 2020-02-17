@@ -248,6 +248,28 @@ public class UserService{ //买火车票
 
 ![springMVC原理](../assets/springMVC原理.jpg)
 
+第一步：发起请求到前端控制器(DispatcherServlet)
+
+第二步：前端控制器请求HandlerMapping查找 Handler（ 可以根据xml配置、注解进行查找）
+
+第三步：处理器映射器HandlerMapping向前端控制器返回Handler
+
+第四步：前端控制器调用处理器适配器去执行Handler
+
+第五步：处理器适配器去执行Handler
+
+第六步：Handler执行完成给适配器返回ModelAndView
+
+第七步：处理器适配器向前端控制器返回ModelAndView（ModelAndView是springmvc框架的一个底层对象，包括Model和view）
+
+第八步：前端控制器请求视图解析器去进行视图解析（根据逻辑视图名解析成真正的视图(jsp)）
+
+第九步：视图解析器向前端控制器返回View
+
+第十步：前端控制器进行视图渲染（ 视图渲染将模型数据(在ModelAndView对象中)填充到request域）
+
+第十一步：前端控制器向用户响应结果
+
 
 
 ## 6. Spring 事务中哪几种事务传播行为?
@@ -271,4 +293,42 @@ public class UserService{ //买火车票
 
 
 参考: [举例讲解spring事务传播行为](https://zhuanlan.zhihu.com/p/88921438)
+
+
+
+## 7. @Autowired和@Resource的区别
+
+**共同点**
+
+@Autowired与@Resource都可以用来装配bean. 都可以写在字段上,或写在setter方法上。
+
+
+
+**不同点**
+
+1. @Autowired默认**按类型装配**（这个注解是属业spring的），默认情况下必须要求依赖对象必须存在，如果要允许null值，可以设置它的required属性为false。如果我们想使用名称装配可以结合@Qualifier注解进行使用，如下：
+
+   ```java
+   @Autowired() 
+   @Qualifier("baseDao")    
+   private BaseDao baseDao;
+   ```
+
+   
+
+2. @Resource **是JDK1.6支持的注解**，**默认按照名称进行装配**，名称可以通过name属性进行指定，如果没有指定name属性，当注解写在字段上时，默认取字段名，按照名称查找，如果注解写在setter方法上默认取属性名进行装配。当找不到与名称匹配的bean时才按照类型进行装配。但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。如果既不指定name也不指定type属性，这时将通过反射机制使用byName自动注入策略。
+
+   
+
+   @Resource装配顺序：
+
+   ①如果同时指定了name和type，则从Spring上下文中找到唯一匹配的bean进行装配，找不到则抛出异常。
+
+   ②如果指定了name，则从上下文中查找名称（id）匹配的bean进行装配，找不到则抛出异常。
+
+   ③如果指定了type，则从上下文中找到类似匹配的唯一bean进行装配，找不到或是找到多个，都会抛出异常。
+
+   ④如果既没有指定name，又没有指定type，则自动按照byName方式进行装配；如果没有匹配，则回退为一个原始类型进行匹配，如果匹配则自动装配。
+
+   @Resource的作用相当于@Autowired，只不过@Autowired按照byType自动注入。
 
