@@ -73,6 +73,7 @@
 
 ## Spring
 
+- [Spring-AOP失效问题](note/Spring-AOP失效问题.md)
 - [Spring数据脱敏](note/Spring数据脱敏.md)
 - [Spring过滤器与拦截器的区别](note/Spring过滤器与拦截器的区别.md)
 - [Spring之AOP简单用法](note/Spring之AOP简单用法.md)
