@@ -1,9 +1,15 @@
+- 公司项目说明
+
+  - [ud-cloud](note/公司项目介绍.md)
+
 - Java基础
 
   - [动态代理](note/Java动态代理.md)
   - [反射](note/Java反射.md)
   - [手写Hashmap](note/手写Hashmap.md)
   - [Hashmap底层实现原理](note/Hashmap底层实现原理.md)
+  - [Hashmap底层实现原理](note/Hashmap底层实现原理.md)
+  - [Java8新特性](note/Java8新特性.md)
 
 
 - 多线程
@@ -34,6 +40,7 @@
   - [面试题-生产环境](note/面试题-生产环境.md)
   - [面试题-NIO](note/面试题-NIO.md)
   - [面试题-并发编程](note/面试-并发编程.md)
+  - [面试题-Mysql优化](note/面试题-Mysql优化.md)
 
   
 
@@ -51,6 +58,8 @@
 
 - 框架
 
+  - [Spring-AOP失效问题](note/Spring-AOP失效问题.md)
+  - [Spring数据脱敏](note/Spring数据脱敏.md)
   - [Spring过滤器与拦截器的区别](note/Spring过滤器与拦截器的区别.md)
   - [Spring之AOP简单用法](note/Spring之AOP简单用法.md)
   - [Spring之Hystrix](note/Spring之Hystrix.md)
@@ -60,7 +69,6 @@
   - [Spring之IOC源码解析](note/Spring之IOC源码解析.md)
   - [Mybatis源码解析](note/Mybatis源码解析.md)
   - [Euraka实现原理](note/Euraka实现原理.md)
-
 
 
 - MySQL
@@ -122,11 +130,14 @@
   - [物联网服务端架构](note/物联网服务端架构.md)
   - [秒杀方案](note/秒杀方案.md)
 
-- 草稿
 
-  - [面试-Kafka](draft/Kafka.md)
-  - [面试-生产者消费者模型](draft/生产者消费者模型.md)
-  - [Kafka消息重复及丢失](draft/Kafka消息重复及丢失.md)
-  - [Mysql调优](draft/Mysql调优.md)
+- 快捷键
+
+  - [快捷键-Idea](note/快捷键-Idea.md)
+
+- 更多
+
+  - [更多](draft/)
+
 
 
