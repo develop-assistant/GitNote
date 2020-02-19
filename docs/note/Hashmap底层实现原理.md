@@ -4,7 +4,7 @@
 
 源码,基于1.8(1.8引入红黑树，链表由1.7的头插法改为尾插法)
 
-```
+```java
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
