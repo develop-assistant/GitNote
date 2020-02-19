@@ -314,6 +314,62 @@ https://hacpai.com/article/1480092912242
 
 
 
+## 7. 线上内存溢出排查流程
+
+```undefined
+>jps
+```
+
+- 2、查看线程信息
+
+
+
+```undefined
+>jstack 19645
+```
+
+- 3、存储进程信息
+
+
+
+```cpp
+>jstack 19645 >t.log
+```
+
+- 4、查看内存信息
+
+
+
+```undefined
+>jmap -histo 19645
+```
+
+- 5、dump内存信息到heap.bin文件
+
+
+
+```swift
+>jmap -dump:format=b,file=heap.bin 19645
+```
+
+- 6、jstat 监视垃圾回收（GC）时间，次数
+
+
+
+```undefined
+>jstat -gc 19645
+```
+
+- 7、使用mat工具或者VisualVM工具导入heap.bin文件分析内存信息
+
+
+
+```undefined
+>
+```
+
+
+
 ## 参考
 
 - https://juejin.im/post/5dd0c0b95188253d73575ca1
