@@ -1,4 +1,4 @@
-```
+```java
 public class CustomHashMap<K, V> {
 
     private class Entry<K, V> {
@@ -96,3 +96,4 @@ public class CustomHashMap<K, V> {
 
 }
 ```
+
