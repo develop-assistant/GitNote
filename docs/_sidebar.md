@@ -64,10 +64,10 @@
   - [Spring之Hystrix](note/Spring之Hystrix.md)
   - [Spring集成kafka](note/Springboot集成kafka)
   - [Spring集成Cache](note/Springboot集成Cache)
-  - [SpringCloud Gateway](note/Spring-cloud-gateway.md)
   - [Spring之IOC源码解析](note/Spring之IOC源码解析.md)
   - [Mybatis源码解析](note/Mybatis源码解析.md)
   - [Euraka实现原理](note/Euraka实现原理.md)
+  - [SpringCloud Gateway静态路由](note/SpringCloud-Gateway静态路由.md)
 
 
 - MySQL
