@@ -69,6 +69,8 @@
   - [Euraka实现原理](note/Euraka实现原理.md)
   - [SpringCloud-Gateway静态路由](note/SpringCloud-Gateway静态路由.md)
   - [SpringCloud-Gateway动态路由](note/SpringCloud-Gateway动态路由.md)
+  - [SpringCloud-Gateway熔断降级](note/SpringCloud-Gateway熔断降级.md)
+  - [SpringCloud-Gateway限流](note/SpringCloud-Gateway限流.md)
 
 
 - MySQL
