@@ -54,9 +54,29 @@ hystrix:command.fallbackCmdA.execution.isolation.thread.timeoutInMilliseconds: 3
 
 ```
 
+新建降级处理类FallbackController
+
+```java
+@RestController
+public class FallbackController {
+
+    @RequestMapping("/defaultfallback")
+    public Map<String,String> defaultfallback(){
+        System.out.println("降级操作...");
+        Map<String,String> map = new HashMap<>();
+        map.put("resultCode","fail");
+        map.put("resultMessage","服务异常");
+        map.put("resultObj","null");
+        return map;
+    }
+}
+```
 
 
-修改consumer模块，让接口休眠5s。然后请求测试，结果如下
+
+同时修改consumer模块，让接口休眠5s，大于网关中设置超时的3秒，因此会触发熔断降级。
+
+测试结果如下
 
 ```shell
 ➜  GitNote git:(master) curl http://localhost:8100/c/consumer
