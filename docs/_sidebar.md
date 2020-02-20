@@ -55,7 +55,7 @@
   - [工厂方法模式](note/设计模式-工厂方法模式.md)
 
 
-- 框架
+- Spring
 
   - [Spring-AOP失效问题](note/Spring-AOP失效问题.md)
   - [Spring数据脱敏](note/Spring数据脱敏.md)
