@@ -195,7 +195,7 @@ Services: [consul, idc-cloud-consumer, idc-cloud-gateway, idc-cloud-provider]
 
 
 
-## . 静态路由
+## 3. 静态路由
 
 Pom.xml
 
