@@ -1,12 +1,20 @@
 # SpringCloud-Gateway静态路由
 
+## 1. 为什么引入API网关
+
+使用 API 网关后的优点如下：
+
+- 易于监控。可以在网关收集监控数据并将其推送到外部系统进行分析。
+- 易于认证。可以在网关上进行认证，然后再将请求转发到后端的微服务，而无须在每个微服务中进行认证。
+- 减少了客户端与各个微服务之间的交互次数。
 
 
-## 1. 搭建环境
+
+## 2. 搭建环境
 
 首先搭建一个微服务基本测试环境，服务发现组件选择consul。
 
-### 1.1. 服务提供者
+### .1. 服务提供者
 
 pom.xml
 
@@ -104,7 +112,7 @@ Services: [consul, idc-cloud-consumer, idc-cloud-gateway, idc-cloud-provider]
 
 
 
-### 1.2. 服务消费者
+### 2.2. 服务消费者
 
 Pom.xml增加
 
@@ -187,7 +195,7 @@ Services: [consul, idc-cloud-consumer, idc-cloud-gateway, idc-cloud-provider]
 
 
 
-## 2. 静态路由
+## . 静态路由
 
 Pom.xml
 
