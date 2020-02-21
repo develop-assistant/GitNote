@@ -72,6 +72,8 @@
   - [SpringCloud-Gateway熔断降级](note/SpringCloud-Gateway熔断降级.md)
   - [SpringCloud-Gateway限流](note/SpringCloud-Gateway限流.md)
   - [SpringCloud-Gateway过滤器](note/SpringCloud-Gateway过滤器.md)
+  - [SpringCloud-Gateway认证](note/SpringCloud-Gateway认证.md)
+  - [SpringCloud-Gateway权重路由](note/SpringCloud-Gateway权重路由.md)
 
 
 - MySQL
