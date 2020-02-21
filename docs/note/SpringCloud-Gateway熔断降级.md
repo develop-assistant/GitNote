@@ -48,7 +48,7 @@ spring:
               args:
                 name: default
                 fallbackUri: forward:/defaultfallback # 只有该id下的服务会降级
-# hystrix 信号量隔离，3秒后自动超时
+# hystrix 信号量隔离，1.5秒后自动超时
 hystrix:command.fallbackCmdA.execution.isolation.thread.timeoutInMilliseconds: 1500
 
 ```
