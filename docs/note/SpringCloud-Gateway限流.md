@@ -106,6 +106,7 @@ hystrix:command.fallbackCmdA.execution.isolation.thread.timeoutInMilliseconds: 1
 这里根据用户ID限流，请求路径中必须携带userId参数
 
 ```java
+@Primary
 @Bean
 KeyResolver userKeyResolver() {
   return exchange -> Mono.just(exchange.getRequest().getQueryParams().getFirst("user"));
