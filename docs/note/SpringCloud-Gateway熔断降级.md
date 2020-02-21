@@ -47,10 +47,9 @@ spring:
             - name: Hystrix
               args:
                 name: default
-                fallbackUri: forward:/defaultfallback
+                fallbackUri: forward:/defaultfallback # 只有该id下的服务会降级
 # hystrix 信号量隔离，3秒后自动超时
-hystrix:command.fallbackCmdA.execution.isolation.thread.timeoutInMilliseconds: 3000
-
+hystrix:command.fallbackCmdA.execution.isolation.thread.timeoutInMilliseconds: 1500
 
 ```
 
@@ -74,7 +73,7 @@ public class FallbackController {
 
 
 
-同时修改consumer模块，让接口休眠5s，大于网关中设置超时的3秒，因此会触发熔断降级。
+同时修改provider模块，让接口休眠2s，大于网关中设置超时的1.5秒，因此会触发熔断降级。
 
 测试结果如下
 
@@ -84,3 +83,4 @@ public class FallbackController {
 ```
 
 可见超时降级配置生效。
+
