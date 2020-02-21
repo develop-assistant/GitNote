@@ -91,7 +91,7 @@ spring:
             - StripPrefix=1
             - name: RequestRateLimiter
               args:
-                key-resolver: '#{@userKeyResolver}'
+                key-resolver: '#{@ipKeyResolver}'
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 3
 
@@ -110,7 +110,6 @@ hystrix:command.fallbackCmdA.execution.isolation.thread.timeoutInMilliseconds: 1
 这里根据用户ID限流，请求路径中必须携带userId参数
 
 ```java
-@Primary
 @Bean
 KeyResolver userKeyResolver() {
   return exchange -> Mono.just(exchange.getRequest().getQueryParams().getFirst("user"));
@@ -122,6 +121,7 @@ KeyResolver需要实现resolve方法，比如根据userid进行限流，则需�
 如果需要根据IP限流，定义的获取限流Key的bean为：
 
 ```java
+@Primary
 @Bean
 KeyResolver ipKeyResolver() {
   return exchange -> Mono.just(exchange.getRequest().getRemoteAddress().getHostName());
@@ -138,6 +138,24 @@ KeyResolver apiKeyResolver() {
   return exchange -> Mono.just(exchange.getRequest().getPath().value());
 }
 ```
+
+**使用Postman测试**
+
+![postman1](../assets/postman1-2285118.png)
+
+
+
+
+
+![postman3](../assets/postman3.png)
+
+
+
+![postman4](../assets/postman4.png)
+
+
+
+![Postman5](../assets/Postman5-2285187.png)
 
 
 
