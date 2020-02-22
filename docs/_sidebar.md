@@ -74,6 +74,7 @@
   - [SpringCloud-Gateway过滤器](note/SpringCloud-Gateway过滤器.md)
   - [SpringCloud-Gateway认证](note/SpringCloud-Gateway认证.md)
   - [SpringCloud-Gateway权重路由](note/SpringCloud-Gateway权重路由.md)
+  - [SpringCloud-Config配置中心](note/SpringCloud-Config配置中心.md)
 
 
 - MySQL
