@@ -4,7 +4,7 @@
 
 ![configbus2](../assets/configbus2.jpg)
 
-
+···
 
 - 1、提交代码触发post请求给bus/refresh
 - 2、server端接收到请求并发送给Spring Cloud Bus
