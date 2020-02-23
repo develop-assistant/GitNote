@@ -46,6 +46,10 @@ l 错误百分比下限：当请求总数在快照时间窗内超过了下限，
 
 
 
+## 断路器工作流程
+
+
+
 ![hystrix流程图](../assets/hystrix流程图.png)
 
 
@@ -61,6 +65,12 @@ Hystrix会在以下四种情况下触发fallback函数：
 3.线程池/信号量已满；
 
 4.熔断器打开；
+
+
+
+## Hystrix主要配置项
+
+![hystrix主要配置项1](../assets/hystrix主要配置项1.png)
 
 
 
