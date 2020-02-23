@@ -176,3 +176,6 @@ KeyResolver apiKeyResolver() {
 </dependency>
 ```
 
+
+
+然后基于过滤器和metrics指标判断是否需要限流。
