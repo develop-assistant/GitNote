@@ -4,6 +4,31 @@
 
 ## 自定义过滤器
 
+
+
+现在假设我们要统计某个服务的响应时间，我们可以在代码中
+
+```java
+long beginTime = System.currentTimeMillis();
+// do something...
+long elapsed = System.currentTimeMillis() - beginTime;
+log.info("elapsed: {}ms", elapsed);
+```
+
+每次都要这么写是不是很烦？Spring 告诉我们有个东西叫 AOP。但是我们是微服务啊，在每个服务里都写也很烦。这时候就该网关的过滤器登台表演了。
+
+自定义过滤器需要实现 `GatewayFilter` 和 `Ordered`。其中 `GatewayFilter` 中的这个方法就是用来实现你的自定义的逻辑的
+
+```
+Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain);
+```
+
+而 `Ordered` 中的 `int getOrder()` 方法是来给过滤器设定优先级别的，值越大则优先级越低。
+
+
+
+好了，让我们来撸代码吧
+
 ```java
 /**
  * 此过滤器功能为计算请求完成时间
@@ -37,6 +62,12 @@ public class ElapsedFilter implements GatewayFilter, Ordered {
 
 
 
+我们在请求刚刚到达时，往 `ServerWebExchange` 中放入了一个属性 `elapsedTimeBegin`，属性值为当时的毫秒级时间戳。然后在请求执行结束后，又从中取出我们之前放进去的那个时间戳，与当前时间的差值即为该请求的耗时。因为这是与业务无关的日志所以将 `Ordered` 设为 `Integer.MAX_VALUE` 以降低优先级。
+
+现在再来看我们之前的问题：怎么来区分是 “pre” 还是 “post” 呢？其实就是 `chain.filter(exchange)` 之前的就是 “pre” 部分，之后的也就是 `then` 里边的是 “post” 部分。
+
+创建好 Filter 之后我们将它添加到我们的 Filter Chain 里边
+
 ```java
 @Configuration
 public class FilterConfig {
@@ -50,6 +81,7 @@ public class FilterConfig {
     @Bean
     public RouteLocator customerRouteLocator(RouteLocatorBuilder builder) {
         // @formatter:off
+      	// 可以对比application.yml中关于路由转发的配置
         return builder.routes()
                 .route(r -> r.path("/filter/**")
                         .filters(f -> f.stripPrefix(1)
@@ -103,7 +135,7 @@ spring:
 
 
 
-测试(网关port=8100，idc-cloud-provider服务port=2001)
+测试(网关模块port=8100，idc-cloud-provider模块port=2001)
 
 ```
 ➜  ~ curl http://localhost:8100/filter/provider
@@ -112,4 +144,8 @@ Services: [consul, idc-cloud-gateway, idc-cloud-provider]
 输出
 /provider: 1ms
 ```
+
+
+
+## 自定义全局过滤器
 
