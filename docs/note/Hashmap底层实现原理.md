@@ -89,6 +89,24 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 
 
+##  HashMap 多线程操作导致死循环问题
+
+在多线程下，进行 put 操作会导致 HashMap 死循环(java7链表头插法引起的)，原因在于 HashMap 的扩容 resize()方法。由于扩容是新建一 个数组，复制原数据到数组。由于数组下标挂有链表，所以需要复制链表，但是多线程操作有可能导致环形链表。复制链表过程如下:
+
+
+
+假设链表为	A.next=B,B.next=null,链表头为A。
+
+1. 线程一读取到当前的 HashMap 情况，在准备扩容时，线程二介入；扩容复制过程为先将 A 复制到新的 hash 表中，然后接着复制 B 到链头。此时的链表变为 B.next=A, A.next=null;
+
+2. 这时候切换为线程一执行，根据上下文保存状态，先取出A并将A插入链头，此时A.next=B,由于线程二的原因，B.next=A, 因此形成环形链表。
+
+   
+
+
+
+
+
 ## 参考
 
 - [https://lushunjian.github.io/blog/2019/01/02/HashMap%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/](https://lushunjian.github.io/blog/2019/01/02/HashMap的底层实现/)
