@@ -89,6 +89,12 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 
 
+## 单线程rehash
+
+![single_thread_rehash](../assets/single_thread_rehash.png)
+
+
+
 ##  HashMap 多线程操作导致死循环问题
 
 在多线程下，进行 put 操作会导致 HashMap 死循环(java7链表头插法引起的)，原因在于 HashMap 的扩容 resize()方法。由于扩容是新建一 个数组，复制原数据到数组。由于数组下标挂有链表，所以需要复制链表，但是多线程操作有可能导致环形链表。复制链表过程如下:
