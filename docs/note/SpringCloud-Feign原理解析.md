@@ -11,3 +11,9 @@
 - RequesTemplate在生成Request
 - Request交给Client去处理，其中Client可以是HttpUrlConnection、HttpClient也可以是Okhttp
 - 最后Client被封装到LoadBalanceClient类，这个类结合类Ribbon做到了负载均衡。
+
+
+
+## 参考
+
+- https://xli1224.github.io/2017/09/14/feign-anaylsis/
