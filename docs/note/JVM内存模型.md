@@ -22,7 +22,7 @@
 
 我们都知道，Java代码是要运行在虚拟机上的，而虚拟机在执行Java程序的过程中会把所管理的内存划分为若干个不同的数据区域，这些区域都有各自的用途。 在[《Java虚拟机规范（Java SE 8）》](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.4)中描述了JVM运行时内存区域结构如下：
 
-![JVM运行时数据区 ](../assets/JVM运行时数据区 .png)
+![](../assets/JVM运行时数据区 .png)
 
 
 
