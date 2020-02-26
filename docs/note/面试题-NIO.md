@@ -251,3 +251,57 @@ public class NIOClient {
 }
 ```
 
+
+
+## Reactor线程模型
+
+ 一般地,I/O多路复用机制都依赖于一个事件多路分离器(Event Demultiplexer)。分离器对象可将来自事件源的I/O事件分离出来，并分发到对应的read/write事件处理器(Event Handler)。开发人员预先注册需要处理的事件及其事件处理器（或回调函数）；事件分离器负责将请求事件传递给事件处理器。两个与事件分离器有关的模式是Reactor和Proactor。Reactor模式采用同步IO，而Proactor采用异步IO。
+
+Proactor和Reactor是两种经典的多路复用I/O模型，主要用于在高并发、高吞吐量的环境中进行I/O处理
+
+Reactor三种线程模型：单线程模型、多线程模型、主从线程模型。
+
+### 1. 单Reactor单线程模型
+
+![reactor单线程模型](../assets/reactor单线程模型.png)
+
+### 2. 单Reactor多线程模型
+
+![reactor多线程模型](../assets/reactor多线程模型.png)
+
+方法说明：
+1.Reactor 对象通过select监控客户端请求事件，收到事件后，通过dispatch进行分发
+2.如果是连接请求，则右Acceptor通过accept处理连接请求，然后创建一个Handler对象处理完成连接后的各种事件
+3.如果不是连接请求，则由Reactor分发调用连接对应的handler来处理
+4.handler只负责相应事件，不做具体的业务处理，通过rad读取数据后，会分发给后面的worker线程池的某个线程处理业务
+5 worker线程池会分配一个独立的线程，完成真正的业务，同时把处理的结果返回给handler
+6 handler收到响应后，通过send将结果返回给client
+优点：
+可以充分利用多核CPU的处理能力
+缺点：
+多线程会数据共享和访问比较复杂，reactor处理了所有的事件的监听和相应，在单线程运行，在高并发场景容易出现性能瓶颈
+
+### 3.主从Reactor多线程模型 
+
+![reactor主从多线程模型](../assets/reactor主从多线程模型.png)
+
+方案说明：
+1.Reactor主线程MainReactor对象通过select监听连接事件，收到事件后，通过Acceptor处理连接事件
+2.当Acceptor处理连接事件后，MainReactor将连接分配给SubReactor
+3.subReactor将连接加入到连接队列进行监听，并创建handler进行各种事件处理
+4.当有新的事件发生时，subReactor就会调用对应的handler进行处理
+5.handler通过rand读取数据，会分发给后面的worker线程进行处理
+6.wroker线程池会分独立的worker线程进行业务处理，并返回结果
+7.handler收到响应的结果后，再通过sned将结果返回给client
+8.Reactor主线程可以对应多个Reactor子线程，即MainReactor可以关联多个subReactor。
+优点：
+父线程与子线程的数据交互简单，职责明确，父线程只需要接收新连接，子线程完成后续的业务处理
+父线程与子线程的数据交互简单，Reactor主线程只需要把新连接传给子线程，子线程无需返回数据
+缺点：
+编程复制读较高。
+
+
+
+## Netty Reactor工作架构图
+
+![netty工作架构](../assets/netty工作架构.jpg)
