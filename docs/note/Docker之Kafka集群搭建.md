@@ -4,7 +4,7 @@
 
 Docker-compose-kafka.yml
 
-```yml
+```yaml
 version: '3.7'
 
 networks:
