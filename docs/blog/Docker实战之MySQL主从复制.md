@@ -8,6 +8,62 @@
 
 # Docker文件编排
 
+由于是测试演为了练用，这里用docker-compose进行配置文件的编排，实际的集群环境中并不是这么部署的。
+
+1. 编排docker-compose-mysql-cluster.yml,安装master和slave节点
+
+```yaml
+version: '3'
+services:
+  mysql-master:
+    image: mysql:5.7
+    container_name: mysql-master
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./mysql/master/my.cnf:/etc/my.cnf"
+      - "./mysql/master/data:/var/lib/mysql"
+    links:
+      - mysql-slave
+
+  mysql-slave:
+    image: mysql:5.7
+    container_name: mysql-slave
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3406:3306"
+    volumes:
+      - "./mysql/slave/my.cnf:/etc/my.cnf"
+      - "./mysql/slave/data:/var/lib/mysql"
+
+```
+
+2. 配置master配置文件my.cnf
+
+```
+[mysqld]
+# [必须]启用二进制日志
+log-bin=mysql-bin 
+# [必须]服务器唯一ID，默认是1，一般取IP最后一段  
+server-id=1
+## 复制过滤：也就是指定哪个数据库不用同步（mysql库一般不同步）
+binlog-ignore-db=mysql
+
+```
+
+3. 配置slave配置文件my.cnf
+ 
+ ```
+ [mysqld]
+# [必须]服务器唯一ID，默认是1，一般取IP最后一段  
+server-id=2
+
+ ```
+
+
 # 如何配置主从复制
 
 # 结果验证
