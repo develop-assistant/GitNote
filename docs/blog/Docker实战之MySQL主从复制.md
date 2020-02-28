@@ -21,7 +21,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - "./mysql/master/my.cnf:/etc/my.cnf"
       - "./mysql/master/data:/var/lib/mysql"
@@ -34,7 +34,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     ports:
-      - "3406:3306"
+      - "3308:3306"
     volumes:
       - "./mysql/slave/my.cnf:/etc/my.cnf"
       - "./mysql/slave/data:/var/lib/mysql"
@@ -51,19 +51,23 @@ log-bin=mysql-bin
 server-id=1
 ## 复制过滤：也就是指定哪个数据库不用同步（mysql库一般不同步）
 binlog-ignore-db=mysql
-
 ```
 
 3. 配置slave配置文件my.cnf
  
- ```
- [mysqld]
+```
+[mysqld]
 # [必须]服务器唯一ID，默认是1，一般取IP最后一段  
 server-id=2
+```
 
- ```
+4. 启动docker-compose，创建docker镜像文件
+
+```docker
+docker-compose -f docker-compose-mysql-cluster.yml up -d
+```
 
 
-# 如何配置主从复制
+# 配置主从复制
 
 # 结果验证
