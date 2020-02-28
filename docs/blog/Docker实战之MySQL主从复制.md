@@ -78,4 +78,63 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 
 # 配置主从复制
 
-# 结果验证
+1. 配置master
+
+![](https://gitee.com/idea360/oss/raw/master/images/docker-mysql-master.png)
+
+2. 配置slave
+
+![](https://gitee.com/idea360/oss/raw/master/images/docker-mysql-slave.png)
+
+这时候就可以运行一些 SQL 语句来验证同步服务是否正常了。 
+
+
+# 验证主从复制
+
+1. master创建db
+
+![](https://gitee.com/idea360/oss/raw/master/images/mysql-master-create-db.png)
+
+2. 查看slave是否同步创建
+
+![](https://gitee.com/idea360/oss/raw/master/images/mysql-slave-sync-db.png)
+
+由结果可知，已完成MySQL主从复制环境的搭建。
+
+# 读写分离
+
+MySQL主从复制是其自己的功能，实现读写分离就得依靠其他了，比如`sharding-jdbc`。但是`sharding-jdbc`只是实现读写分离，本身的权限控制还是需要MySQL这边来配置的。
+
+1. 配置master账户及权限
+
+创建帐号并授予读写权限
+
+```mysql
+CREATE USER 'master'@'%' IDENTIFIED BY 'Password123';
+GRANT select,insert,update,delete ON *.* TO 'master'@'%';
+flush privileges;
+```
+
+![](https://gitee.com/idea360/oss/raw/master/images/mysql-master-create-user.png)
+
+
+2. 配置slave账户及权限
+
+创建帐号并授予只读权限
+
+```mysql
+use mysql;
+CREATE USER 'slave'@'%' IDENTIFIED BY 'Password123';
+GRANT select ON *.* TO 'slave'@'%';
+FLUSH PRIVILEGES;
+```
+
+![](https://gitee.com/idea360/oss/raw/master/images/mysql-slave-create-user.png)
+
+# 最后
+
+这篇文章已搭建环境为主，后续会继续完善故障自动迁移、分库分表、数据平滑迁移等相关演练。菜鸟博客，不尽完善，希望大家不吝赐教。同时欢迎大家关注小生的公众号【当我遇上你】。
+
+
+
+
