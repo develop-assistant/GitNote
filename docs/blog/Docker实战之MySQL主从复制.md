@@ -67,6 +67,14 @@ server-id=2
 docker-compose -f docker-compose-mysql-cluster.yml up -d
 ```
 
+`docker ps`查看进程，可以看到2个实例已启动。
+
+```
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                               NAMES
+1f4ad96b4d5e        mysql:5.7           "docker-entrypoint.s…"   48 seconds ago      Up 46 seconds       33060/tcp, 0.0.0.0:3307->3306/tcp   mysql-master
+8e2214aacc43        mysql:5.7           "docker-entrypoint.s…"   49 seconds ago      Up 47 seconds       33060/tcp, 0.0.0.0:3308->3306/tcp   mysql-slave
+```
+
 
 # 配置主从复制
 
