@@ -44,7 +44,7 @@ JVM 中内置了三个重要的 ClassLoader，除了 BootstrapClassLoader 其他
 - **缓存机制**，缓存机制将会保证所有加载过的Class都会被缓存，当程序中需要使用某个Class时，类加载器先从缓存区寻找该Class，只有缓存区不存在，系统才会读取该类对应的二进制数据，并将其转换成Class对象，存入缓存区。这就是为什么修改了Class后，必须重启JVM，程序的修改才会生效
 
 
-# JVM类加载机制原理
+# JVM类加载机制源码
 
 双亲委派模型实现源码分析
 
@@ -194,10 +194,167 @@ Connected to the target VM, address: '127.0.0.1:63569', transport: 'socket'
 否则 JavaFX 应用程序类必须扩展javafx.application.Application
 ```
 
-**分析:**首先由于全限定类名java.lang.String等于jdk中的String类，根据上边类加载源码可知，当AppClassLoader加载该String时，判断java.lang.String已经加载，便不会再次加载。所以执行的依旧时jdk中的String，但是系统的java.lang.String中没有main()方法，所以会报错。这是一种安全机制。
+**分析:**首先由于全限定类名java.lang.String等于jdk中的String类，根据上边类加载源码可知，当AppClassLoader加载该String时，判断java.lang.String已经加载，便不会再次加载。所以执行的依旧是jdk中的String，但是系统的java.lang.String中没有main()方法，所以会报错。这是一种安全机制。
 
-**注意:**javac编译是可以正常编译的。下边的案例会用到这里的编译class，看自定义的类加载器是否可以加载这里的class文件。
+然后`验证下默认的类加载器能否加载自定义的java.lang.String`。==，默认的AppClassLoader能加载Everything？
 
+```java
+public class LoadStringDemo {
+
+    public static void main(String[] args) {
+        URLClassLoader systemClassLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+        URL[] urLs = systemClassLoader.getURLs();
+        for (URL url: urLs) {
+            System.out.println(url);
+        }
+    }
+}
+```
+输出日志如下
+
+```
+...
+file:/Users/cuishiying/work/demo-java/target/classes/
+...
+```
+
+日志太多，但是绝对没有其他的包路径(当前包下的java.lang.String默认只能时jdk中的)
 
 
 # 自定义类加载器
+
+**为什么会存在自定义类加载器呢**
+
+自定义类加载器的核心在于对字节码文件的获取，如果是加密的字节码则需要在该类中对文件进行解密。
+
+因为实际项目中，会有多种加载.class文件的方式，
+
+- 从本地系统中直接加载
+- 通过网络下载.class文件
+- 从zip，jar等归档文件中加载.class文件
+- 从专有数据库中提取.class文件
+- 将Java源文件动态编译为.class文件
+
+**如何自定义类加载器**
+
+```java
+package com.example.demojava.loadclass;
+
+import com.demo.ClassLoaderDemo;
+
+import java.io.*;
+import java.lang.reflect.Method;
+
+
+public class MyClassLoader extends ClassLoader {
+
+    private String root;
+
+
+    /**
+     * @param name 全限定类名
+     * @return
+     * @throws ClassNotFoundException
+     */
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        byte[] classData = loadClassData(name);
+
+        if (classData == null) {
+            throw new ClassNotFoundException();
+        } else {
+            return defineClass(name, classData, 0, classData.length);
+        }
+    }
+
+
+    private byte[] loadClassData(String className) {
+        String fileName = root + File.separatorChar +
+                className.replace('.', File.separatorChar) + ".class";
+
+        try {
+            InputStream ins = new FileInputStream(fileName);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            int bufferSize = 1024;
+
+            byte[] buffer = new byte[bufferSize];
+
+            int length = 0;
+
+            while ((length = ins.read(buffer)) != -1) {
+                baos.write(buffer, 0, length);
+            }
+
+            return baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public String getRoot() {
+        return root;
+    }
+
+    public void setRoot(String root) {
+        this.root = root;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        MyClassLoader classLoader = new MyClassLoader();
+        classLoader.setRoot("/Users/cuishiying/Desktop/demo");
+
+        Class<?> clz = Class.forName("LoadDemo", true, classLoader);
+        Object  instance = clz.newInstance();
+        Method test = clz.getDeclaredMethod("test");
+        test.setAccessible(true);
+        test.invoke(instance); 
+
+        System.out.println(instance.getClass().getClassLoader());
+
+    }
+}
+```
+
+结果输出
+
+```
+test
+com.example.demojava.loadclass.MyClassLoader@75bd9247
+```
+
+由此可知，自定义类加载器已可以正常工作。这里我们不能把LoadDemo放在类路径下，由于双亲委托机制的存在，会直接导致该类由 AppClassLoader加载，而不会通过我们自定义类加载器来加载。
+
+
+
+**自定义类加载器加载手写java.lang.String**
+
+改写自定义类加载器的main()方法
+```java
+    public static void main(String[] args) throws Exception {
+
+        MyClassLoader classLoader = new MyClassLoader();
+        classLoader.setRoot("/Users/cuishiying/Desktop/demo");
+
+        Class<?> clz = classLoader.findClass("java.lang.String");
+        Object  instance = clz.newInstance();
+
+        System.out.println(instance.getClass().getClassLoader());
+    }
+```
+
+JVM由于安全机制抛出了SecurityException
+```
+/Users/cuishiying/Desktop/demo/java/lang/String.class
+Exception in thread "main" java.lang.SecurityException: Prohibited package name: java.lang
+    at java.lang.ClassLoader.preDefineClass(ClassLoader.java:662)
+    at java.lang.ClassLoader.defineClass(ClassLoader.java:761)
+    at java.lang.ClassLoader.defineClass(ClassLoader.java:642)
+    at com.example.demojava.loadclass.MyClassLoader.findClass(MyClassLoader.java:25)
+    at com.example.demojava.loadclass.MyClassLoader.main(MyClassLoader.java:71)
+```
