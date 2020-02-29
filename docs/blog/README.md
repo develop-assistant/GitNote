@@ -5,3 +5,4 @@
 - [多线程-线程池的正确打开方式](blog/多线程-线程池的正确打开方式.md)
 - [JVM类加载器是否可以加载自定义的String](blog/JVM类加载器是否可以加载自定义的String.md)
 - [Docker实战之MySQL主从复制](blog/Docker实战之MySQL主从复制.md)
+- [通过乐观锁解决库存超卖的问题](blog/通过乐观锁解决库存超卖的问题.md)

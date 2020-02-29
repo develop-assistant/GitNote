@@ -1,0 +1,20 @@
+2020-02-29 21:51:01,304 INFO o.a.j.u.JMeterUtils: Setting Locale to zh_CN
+2020-02-29 21:51:01,340 INFO o.a.j.JMeter: Loading user properties from: /Users/cuishiying/app/apache-jmeter-5.1.1/bin/user.properties
+2020-02-29 21:51:01,341 INFO o.a.j.JMeter: Loading system properties from: /Users/cuishiying/app/apache-jmeter-5.1.1/bin/system.properties
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: Copyright (c) 1998-2019 The Apache Software Foundation
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: Version 5.1.1 r1855137
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: java.version=1.8.0_211
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: os.name=Mac OS X
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: os.arch=x86_64
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: os.version=10.15.3
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: file.encoding=UTF-8
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: java.awt.headless=null
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: Max memory     =1073741824
+2020-02-29 21:51:01,348 INFO o.a.j.JMeter: Available Processors =8
+2020-02-29 21:51:01,352 INFO o.a.j.JMeter: Default Locale=English (EN)
+2020-02-29 21:51:01,352 INFO o.a.j.JMeter: JMeter  Locale=Chinese (China)
+2020-02-29 21:51:01,352 INFO o.a.j.JMeter: JMeterHome=/Users/cuishiying/app/apache-jmeter-5.1.1
+2020-02-29 21:51:01,352 INFO o.a.j.JMeter: user.dir  =/Users/cuishiying/work/GitNote/docs/blog
+2020-02-29 21:51:01,352 INFO o.a.j.JMeter: PWD       =/Users/cuishiying/work/GitNote/docs/blog
+2020-02-29 21:51:01,364 INFO o.a.j.JMeter: IP: 192.168.124.5 Name: cuishiying FullName: 192.168.124.5
