@@ -137,6 +137,189 @@ done
 
 这里还是通过docker-compose进行测试环境的docker编排。
 
+```yaml
+version: '3.7'
+
+services:
+  redis7001:
+    image: 'redis'
+    container_name: redis7001
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7001/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7001/data:/data
+    ports:
+      - "7001:7001"
+      - "17001:17001"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+
+
+  redis7002:
+    image: 'redis'
+    container_name: redis7002
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7002/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7002/data:/data
+    ports:
+      - "7002:7002"
+      - "17002:17002"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+
+
+  redis7003:
+    image: 'redis'
+    container_name: redis7003
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7003/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7003/data:/data
+    ports:
+      - "7003:7003"
+      - "17003:17003"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+
+
+  redis7004:
+    image: 'redis'
+    container_name: redis7004
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7004/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7004/data:/data
+    ports:
+      - "7004:7004"
+      - "17004:17004"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+
+
+  redis7005:
+    image: 'redis'
+    container_name: redis7005
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7005/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7005/data:/data
+    ports:
+      - "7005:7005"
+      - "17005:17005"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+
+
+  redis7006:
+    image: 'redis'
+    container_name: redis7006
+    command:
+      ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-cluster/7006/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-cluster/7006/data:/data
+    ports:
+      - "7006:7006"
+      - "17006:17006"
+    environment:
+      # 设置时区为上海，否则时间会有问题
+      - TZ=Asia/Shanghai
+
+```
+
+启动结果如图
+
+![](https://gitee.com/idea360/oss/raw/master/images/docker-redis-up.png)
+
+# 集群配置
+
+redis集群官方提供了配置脚本，4.x和5.x略有不同，具体可参见[集群配置](https://redis.io/topics/cluster-tutorial)
+
+下边是我自己的环境
+
+```bash
+docker exec -it redis7001 redis-cli -p 7001 -a 123456 --cluster create 192.168.124.5:7001 192.168.124.5:7002 192.168.124.5:7003 192.168.124.5:7004 192.168.124.5:7005 192.168.124.5:7006 --cluster-replicas 1
+```
+
+看到如下结果说明集群配置成功
+
+![](https://gitee.com/idea360/oss/raw/master/images/docker-redis-cluster-success.png)
+
+# 集群测试
+
+接下来进行一些集群的基本测试
+
+**1. 查看集群通信是否正常**
+
+redis7001主节点对它的副本节点redis7005进行ping操作。
+
+> -h host -p port -a pwd  
+
+```bash
+➜  docker docker exec -it redis7001 redis-cli -h 192.168.124.5 -p 7005 -a 123456 ping
+
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+PONG
+```
+
+**2. 测试存储**
+
+redis7001主节点客户端操作redis7003主节点
+
+```bash
+➜  docker docker exec -it redis7001 redis-cli -h 192.168.124.5 -p 7003 -a 123456
+
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+192.168.124.5:7003> set name admin
+(error) MOVED 5798 192.168.124.5:7002
+```
+由于Redis Cluster会根据key进行hash运算，然后将key分散到不同slots，name的hash运算结果在redis7002节点上的slots中。所以我们操作redis7003写操作会自动路由到7002。然而error提示无法路由？没关系，差一个 `-c` 参数而已。
+
+再次运行查看结果如下:
+
+```bash
+➜  docker docker exec -it redis7001 redis-cli -h 192.168.124.5 -p 7003 -a 123456 -c
+
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+192.168.124.5:7003> set name admin
+-> Redirected to slot [5798] located at 192.168.124.5:7002
+OK
+192.168.124.5:7002> get name
+"admin"
+192.168.124.5:7002>
+```
+
+**3. 查看集群状态**
+
+![](https://gitee.com/idea360/oss/raw/master/images/redis-cluster-node.png)
+
+
+**4. 查看slots分片**
+
+![](https://gitee.com/idea360/oss/raw/master/images/redis-cluster-slots-info.png)
+
+**5. 查看集群信息**
+
+![](https://gitee.com/idea360/oss/raw/master/images/redis-cluster-info.png)
+
+**6. 测试读写分离**
+
+![](https://gitee.com/idea360/oss/raw/master/images/redis-cluster-slave-readonly.png)
+
+试试看，发现读不到，原来在redis cluster中，如果你要在slave读取数据，那么需要带先执行 `readonly` 指令，然后 `get key`
+
+
 
 # 容灾演练
 
