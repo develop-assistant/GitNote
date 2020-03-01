@@ -321,12 +321,14 @@ OK
 
 **7. 简单压测**
 
+
 | 选项  | 描述                         |
 | ---- | --------------------------- |
 | -t   |指定命令                       |
 | -c   |客户端连接数                    |
 | -n   |总请求数                       |
 | -d   |set、get的value大小(单位byte)   |
+
 
 测试如下
 
@@ -367,7 +369,7 @@ docker stop redis7001
 
 在SpringBoot2.x版本中，redis默认的连接池已经更换为Lettuce，而不再是jedis。
 
-1. 在pom.xml中引入相关依赖
+**1. 在pom.xml中引入相关依赖**
 
 ```xml
         <dependency>
@@ -380,7 +382,7 @@ docker stop redis7001
         </dependency>
 ```
 
-2. application.yml
+**2. application.yml**
 
 ```yaml
 spring:
@@ -407,7 +409,7 @@ spring:
       config: classpath:ehcache.xml
 ```
 
-3. redis配置
+**3. redis配置**
 
 ```java
 @Configuration
@@ -424,7 +426,7 @@ public class RedisConfig {
 }
 ```
 
-4. 基本测试
+**4. 基本测试**
 
 ```java
 @SpringBootTest
