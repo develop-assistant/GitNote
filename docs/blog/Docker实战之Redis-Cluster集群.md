@@ -363,8 +363,95 @@ docker stop redis7001
 
 ![](https://gitee.com/idea360/oss/raw/master/images/redis-cluster-slave-restart.png)
 
+# SpringBoot配置Redis集群
 
-# Redis持久化
+在SpringBoot2.x版本中，redis默认的连接池已经更换为Lettuce，而不再是jedis。
 
-# Redis主从同步
+1. 在pom.xml中引入相关依赖
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+```
+
+2. application.yml
+```yaml
+spring:
+  redis:
+    timeout: 6000
+    password: 123456
+    cluster:
+      max-redirects: 3 # 获取失败 最大重定向次数 
+      nodes:
+        - 192.168.124.5:7001
+        - 192.168.124.5:7002
+        - 192.168.124.5:7003
+        - 192.168.124.5:7004
+        - 192.168.124.5:7005
+        - 192.168.124.5:7006
+    lettuce:
+      pool:
+        max-active: 1000 #连接池最大连接数（使用负值表示没有限制）
+        max-idle: 10 # 连接池中的最大空闲连接
+        min-idle: 5 # 连接池中的最小空闲连接
+        max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+```
+
+3. redis配置
+```java
+@Configuration
+@AutoConfigureAfter(RedisAutoConfiguration.class)
+public class RedisConfig {
+    @Bean
+    public RedisTemplate<String, Object> redisCacheTemplate(LettuceConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
+    }
+}
+```
+
+4. 基本测试
+```java
+@SpringBootTest
+public class RedisTest {
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Test
+    public void test() {
+        redisTemplate.opsForValue().set("name", "admin");
+        String name = redisTemplate.opsForValue().get("name");
+        System.out.println(name); //输出admin
+    }
+}
+```
+
+
+
+# 总结
+
+通过以上演示，基本上可以在本地环境下用我们的Redis Cluster集群了。最后再上一张本地映射文件的最终样子，帮助大家了解Redis持久化及集群相关的东西。感兴趣的小伙伴可以自行测试并查看其中的内容。
+
+![](https://gitee.com/idea360/oss/raw/master/images/docker-redis-cluster-map-file.png)
+
+内容如有错漏，还望大家不吝赐教，同时，欢迎大家关注公众号【当我遇上你】,你们的支持就是我写作的最大动力。
+
+# 参考
+
+- https://redis.io/topics/cluster-tutorial
+
+
+
 
