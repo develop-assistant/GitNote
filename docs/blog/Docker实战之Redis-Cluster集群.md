@@ -319,6 +319,18 @@ OK
 
 试试看，发现读不到，原来在redis cluster中，如果你要在slave读取数据，那么需要带先执行 `readonly` 指令，然后 `get key`
 
+**7. 简单压测**
+
+| 选项  | 描述                         |
+| ---- | --------------------------- |
+| -t   |指定命令                       |
+| -c   |客户端连接数                    |
+| -n   |总请求数                       |
+| -d   |set、get的value大小(单位byte)   |
+
+![](https://gitee.com/idea360/oss/raw/master/images/redis-benchmark.png)
+
+这里没啥实际意义，在工作业务上大家可以根据QPS和主机配置进行压测，计算规划出节点数量。
 
 
 # 容灾演练
