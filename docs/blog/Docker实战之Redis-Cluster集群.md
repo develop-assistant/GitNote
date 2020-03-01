@@ -88,7 +88,7 @@ Redis Cluster着眼于`提高并发量`。
 
 在docker环境中，配置文件映射宿主机的时候，(宿主机)必须有配置文件。[附件](https://raw.githubusercontent.com/antirez/redis/5.0.7/redis.conf)在这里。大家可以根据自己的需求定制配置文件。
 
-下边是我的配置文件redis-cluster.tmpl
+下边是我的配置文件 `redis-cluster.tmpl`
 
 ```text
 # redis端口
@@ -118,7 +118,7 @@ auto-aof-rewrite-percentage 100
 auto-aof-rewrite-min-size 64mb
 ```
 
-由于节点IP相同，只有端口上的差别，现在通过脚本生成配置文件
+由于节点IP相同，只有端口上的差别，现在通过脚本 `redis-cluster-config.sh` 批量生成配置文件
 
 ```bash
 for port in `seq 7001 7006`; do \
@@ -128,10 +128,14 @@ for port in `seq 7001 7006`; do \
 done
 ```
 
+生成的配置文件如下图
+
+![](https://gitee.com/idea360/oss/raw/master/images/redis-cluster-config-tree.png)
 
 
 # Docker环境搭建
 
+这里还是通过docker-compose进行测试环境的docker编排。
 
 
 # 容灾演练
