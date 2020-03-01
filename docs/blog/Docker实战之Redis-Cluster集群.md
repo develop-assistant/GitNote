@@ -1,6 +1,6 @@
 # 概述
 
-接上一篇[Docker实战之MySQL主从复制](https://mp.weixin.qq.com/s/3FbY6jT-PdgUHsRwHBSWBw), 这里是Docker实战的第二篇，主要进行Redis-Cluster集群环境的快速搭建。Redis作为基于键值对的NoSQL数据库，具有高性能、丰富的数据结构、持久化、高可用、分布式等特性，同时Redis本身非常稳定，已经得到业界的广泛认可和使用。
+接上一篇[Docker实战之MySQL主从复制](https://mp.weixin.qq.com/s/3FbY6jT-PdgUHsRwHBSWBw), 这里是Docker实战系列的第二篇，主要进行Redis-Cluster集群环境的快速搭建。Redis作为基于键值对的NoSQL数据库，具有高性能、丰富的数据结构、持久化、高可用、分布式等特性，同时Redis本身非常稳定，已经得到业界的广泛认可和使用。
 
 在Redis中，集群的解决方案有三种
 
@@ -273,7 +273,7 @@ Warning: Using a password with '-a' or '-u' option on the command line interface
 PONG
 ```
 
-**2. 测试存储**
+**2. 测试简单存储**
 
 redis7001主节点客户端操作redis7003主节点
 
@@ -328,12 +328,41 @@ OK
 | -n   |总请求数                       |
 | -d   |set、get的value大小(单位byte)   |
 
-![](https://gitee.com/idea360/oss/raw/master/images/redis-benchmark.png)
+测试如下
+
+```bash
+➜  docker docker exec -it redis7001 bash
+root@cbc6e76a3ed2:/data# redis-benchmark -h 192.168.124.5 -p 7001 -t set -c 100 -n 50000 -d 20
+====== SET ======
+  50000 requests completed in 10.65 seconds
+  100 parallel clients
+  20 bytes payload
+  keep alive: 1
+
+0.00% <= 2 milliseconds
+0.01% <= 3 milliseconds
+...
+100.00% <= 48 milliseconds
+100.00% <= 49 milliseconds
+4692.63 requests per second
+```
 
 这里没啥实际意义，在工作业务上大家可以根据QPS和主机配置进行压测，计算规划出节点数量。
 
-
 # 容灾演练
+
+现在我们杀掉主节点redis7001，看从节点redis7005是否会接替它的位置。
+
+```bash
+docker stop redis7001
+```
+
+![](https://gitee.com/idea360/oss/raw/master/images/redis-clsuter-stop-master.png)
+
+再试着启动7001，它将自动作为slave挂载到7005
+
+![](https://gitee.com/idea360/oss/raw/master/images/redis-cluster-slave-restart.png)
+
 
 # Redis持久化
 
