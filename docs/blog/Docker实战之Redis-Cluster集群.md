@@ -368,6 +368,7 @@ docker stop redis7001
 在SpringBoot2.x版本中，redis默认的连接池已经更换为Lettuce，而不再是jedis。
 
 1. 在pom.xml中引入相关依赖
+
 ```xml
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -380,6 +381,7 @@ docker stop redis7001
 ```
 
 2. application.yml
+
 ```yaml
 spring:
   redis:
@@ -406,6 +408,7 @@ spring:
 ```
 
 3. redis配置
+
 ```java
 @Configuration
 @AutoConfigureAfter(RedisAutoConfiguration.class)
@@ -422,6 +425,7 @@ public class RedisConfig {
 ```
 
 4. 基本测试
+
 ```java
 @SpringBootTest
 public class RedisTest {
