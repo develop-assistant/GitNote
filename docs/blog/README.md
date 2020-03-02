@@ -7,3 +7,4 @@
 - [通过乐观锁解决库存超卖的问题](blog/通过乐观锁解决库存超卖的问题.md)
 - [Docker实战之MySQL主从复制](blog/Docker实战之MySQL主从复制.md)
 - [Docker实战之Redis-Cluster集群](blog/Docker实战之Redis-Cluster集群.md)
+- [Docker实战之Consul集群](blog/Docker实战之Consul集群.md)
