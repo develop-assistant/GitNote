@@ -20,11 +20,7 @@
 
 作为高频的提问方式，面试官永远从十万个为什么开始。但是最为程序员，还是需要`知其然，知其所以然`。以下是几个常用的服务发现组件的对比。
 
-| 组件名     | 语言  | CAP | 一致性算法 | 服务健康检查 | k8s | 多数据中心 |
-| -----     | ---  | --- | -------- | ---------- | --- | -------- |
-| Eureka    | Java | AP  | 无       | 可配支持     | -   | -        |
-| Consul    | Go   | CP  | Raft     | 支持        | 支持 | 支持     |
-| Zookeeper | Java | CP  | Paxos    | 支持        | -   | -        |
+![](https://gitee.com/idea360/oss/raw/master/images/service-discovery-vs.png)
 
 服务发现组件的选型主要从以下几个方面进行。CAP理论、一致性算法、多数据中心、健康检查、是否支持k8s等。
 
@@ -39,7 +35,7 @@
 
 以下是几种常见的一致性算法
 
-![](https://gitee.com/idea360/oss/raw/master/images/consensus-algorithm .png)
+![](https://gitee.com/idea360/oss/raw/master/images/consensus-algorithm%20.png)
 
 
 **3. 多数据中心**
@@ -128,7 +124,7 @@ services:
 ```
 
 执行 `docker-compose -f docker-compose-consul-cluster.yml up -d` 启动，然后访问
-http://localhost:8500
+[http://localhost:8500](http://localhost:8500)
 
 看到下图即启动成功
 
@@ -137,14 +133,4 @@ http://localhost:8500
 # 最后
 
 Docker实战系列皆以快速搭建学习环境为主，Consul的特性学习及生产环境配置还任重道远。阅读过程中如有疑问或错误，还望多多指正。
-
-
-
-
-
-
-
-
-
-
 
