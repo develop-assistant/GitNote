@@ -280,7 +280,7 @@ baseOffset: 2 lastOffset: 2 count: 1 baseSequence: -1 lastSequence: -1 producerI
 | offset: 2 CreateTime: 1583317554831 keysize: -1 valuesize: 4 sequence: -1 headerKeys: [] payload: msg6
 ```
 
-这里需要看下自己的文件路径是什么，别直接copy我的哦
+> 这里需要看下自己的文件路径是什么，别直接copy我的哦
 
 *查看.index索引文件*
 
