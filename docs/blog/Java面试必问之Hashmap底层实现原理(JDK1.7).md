@@ -163,7 +163,57 @@ get()逻辑相对比较简单，如图所示
 
 # 6. Hashmap扩容安全问题
 
-首先用图给大家模拟下扩容过程。
+大家都知道结果: 多线程扩容有可能会形成环形链表，这里用图给大家模拟下扩容过程。
+
+首先看下单线程扩容的头插法
+
+![](https://gitee.com/idea360/oss/raw/master/images/Hashmap-java7-resize-singlethread.png)
+
+然后看下多线程可能会出现的问题
+
+![](https://gitee.com/idea360/oss/raw/master/images/java7-hashmap-resize-multithread.png)
+
+以下是源码，你仔细品一品
+
+```java
+    void transfer(Entry[] newTable) {
+        Entry[] src = table;
+        int newCapacity = newTable.length;
+        for (int j = 0; j < src.length; j++) {
+            Entry<K,V> e = src[j];
+            if (e != null) {
+                // 释放旧Entry数组的对象引用
+                src[j] = null;
+                do {
+                    Entry<K,V> next = e.next;
+                    // 重新根据新的数组长度计算位置(同一个bucket上元素hash相等，所以扩容后必然还在一个链表上)
+                    int i = indexFor(e.hash, newCapacity);
+                    // 头插法(同一位置上新元素总会被放在链表的头部位置),将newTable[i]的引用赋给了e.next
+                    e.next = newTable[i];
+                    // 将元素放在数组上
+                    newTable[i] = e;
+                    // 访问下一个元素
+                    e = next;
+                } while (e != null);
+            }
+        }
+    }
+```
+
+# 7. Hashmap寻找bucket位置
+
+```java
+    static int indexFor(int h, int length) {
+        // 根据hash与数组长度mod运算
+        return h & (length-1);
+    }
+```
+
+由源码可知, jdk根据key的hash值和数组长度做mod运算，这里用位运算代替mod。
+
+
+
+
 
 
 
