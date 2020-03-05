@@ -211,6 +211,17 @@ get()逻辑相对比较简单，如图所示
 
 由源码可知, jdk根据key的hash值和数组长度做mod运算，这里用位运算代替mod。
 
+hash运算值是一个int整形值，在java中int占4个字节，32位，下边通过图示来说明位运算。
+
+![](https://gitee.com/idea360/oss/raw/master/images/mod-vs-binary.png)
+
+# 8. AD
+
+如果您觉得还行，请关注公众号【当我遇上你】, 您的支持是我输出的最大动力。
+同时，欢迎大家一起交流学习。
+
+![](https://gitee.com/idea360/oss/raw/master/images/wechat-qr-code.png)
+
 
 
 
