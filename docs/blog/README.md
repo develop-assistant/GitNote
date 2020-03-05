@@ -11,3 +11,4 @@
 - [Docker实战之Zookeeper集群](blog/Docker实战之Zookeeper集群.md)
 - [Docker实战之Kafka集群.md](blog/Docker实战之Kafka集群.md)
 - [Java面试必问之Hashmap底层实现原理(JDK1.7)](blog/Java面试必问之Hashmap底层实现原理(JDK1.7).md)
+- [Java面试必问之Hashmap底层实现原理(JDK1.8)](blog/Java面试必问之Hashmap底层实现原理(JDK1.8).md)
