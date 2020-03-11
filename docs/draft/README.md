@@ -6,6 +6,7 @@
   - [Mysql调优](draft/Mysql调优.md)
   - [Kafka外网测试](draft/Kafka外网测试.md)
   - [面试之Redis](draft/面试之Redis.md)
+  - [同步与互斥](draft/同步与互斥.md)
 
   
 
