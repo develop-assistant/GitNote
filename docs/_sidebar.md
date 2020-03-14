@@ -1,4 +1,4 @@
-- 公司项目说明
+<!-- - 公司项目说明
 
   - [ud-cloud](note/公司项目介绍.md)
 
@@ -153,8 +153,28 @@
 
 - 更多
 
+  - [Java基础](menu/Java基础.md)
   - [更多](draft/)
   - [博客](blog/)
+ -->
 
 
+- 学习笔记
+
+  - [公司项目](menu/公司项目.md)
+  - [面试题](menu/面试题.md)
+  - [Java基础](menu/Java基础.md)
+  - [多线程](menu/多线程.md)
+  - [JVM虚拟机](menu/JVM虚拟机.md)
+  - [MySQL](menu/MySQL.md)
+  - [Redis](menu/Redis.md)
+  - [Zookeeper](menu/Zookeeper.md)
+  - [Kafka](menu/Kafka.md)
+  - [Spring](menu/Spring.md)
+  - [分布式](menu/分布式.md)
+  - [设计模式](menu/设计模式.md)
+  - [算法](menu/算法.md)
+  - [其他](menu/其他.md)
+  - [草稿](draft/)
+  - [博客](blog/)
 
