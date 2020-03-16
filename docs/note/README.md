@@ -111,6 +111,7 @@
 * [Docker之Nginx](note/Docker之Nginx.md)
 * [Docker之openresty](note/Docker之openresty.md)
 * [Docker之Mysql主从](note/Docker之Mysql主从.md)
+* [K8S运行Hello-World](note/K8S运行Hello-World.md)
 
 
 # 其他
