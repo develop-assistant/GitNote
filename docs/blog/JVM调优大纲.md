@@ -54,6 +54,15 @@ pstree 查看进程线程数量
 netstat 查看网络连接数量
 ```
 
+# 频繁YGC引起FullGC
+
+1. Eden区分配过小
+
+```
+jstat -gc 1701 1000 5
+jmap -heap 1701
+```
+
 
 
 # 如何分析CPU飙升的问题
@@ -83,4 +92,7 @@ netstat 查看网络连接数量
 - jstack -l pid
 
 
-# 结语
+# 参考
+
+- https://tech.meituan.com/2017/12/29/jvm-optimize.html
+
