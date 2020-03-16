@@ -67,6 +67,8 @@ jmap -heap 1701
 
 # 如何分析CPU飙升的问题
 
+可能是young gc频率过高导致
+
 - top 找到最耗CPU进程
 - top -Hp pid 找到该进程下最耗费cpu的线程
 - printf “%x\n” 15332  转换16进制（转换后为0x3be4） 
