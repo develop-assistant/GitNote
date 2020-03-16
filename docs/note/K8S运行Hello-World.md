@@ -53,4 +53,5 @@ kubectl create deployment hello-node --image=cuishiying/hello-node
 
 # 参考
 
+- https://zhuanlan.zhihu.com/p/112755080
 - https://kubernetes.io/zh/docs/tutorials/hello-minikube/
