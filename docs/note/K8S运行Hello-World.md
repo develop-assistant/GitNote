@@ -49,3 +49,8 @@ docker push cuishiying/hello-node
 ```
 kubectl create deployment hello-node --image=cuishiying/hello-node
 ```
+
+
+# 参考
+
+- https://kubernetes.io/zh/docs/tutorials/hello-minikube/
