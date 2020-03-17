@@ -7,6 +7,8 @@
   - [Kafka外网测试](draft/Kafka外网测试.md)
   - [面试之Redis](draft/面试之Redis.md)
   - [同步与互斥](draft/同步与互斥.md)
+  - [Springboot整合websocket消息推送](draft/Springboot整合websocket消息推送.md)
+  - [经典sql面试](draft/经典sql面试.md)
 
   
 
